@@ -15,8 +15,9 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        display: ['Playfair Display', 'serif'],
+        'display': ['Castely', 'serif'],
+        'body': ['Gathen', 'sans-serif'],
+        'mono': ['Metrolin', 'monospace'],
       },
     },
   },

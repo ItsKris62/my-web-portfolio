@@ -8,7 +8,7 @@ export default function Hero() {
   return (
     <section
       className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{ backgroundImage: "url('/assets/pattern-1.png')" }}
+      style={{ backgroundImage: "url('/images/pattern-1.png')" }}
     >
       {/* Background Image with Parallax */}
       <ParallaxWrapper offset={150} startOffset={-300} endOffset={300}>

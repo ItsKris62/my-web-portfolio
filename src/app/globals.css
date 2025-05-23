@@ -112,6 +112,21 @@
   --sidebar-ring: #FFEBD0;
 }
 
+@font-face {
+  font-family: 'Castely';
+  src: url('/fonts/Castely.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Gathen';
+  src: url('/fonts/Gathen.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Metrolin';
+  src: url('/fonts/Metrolin.ttf') format('truetype');
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
