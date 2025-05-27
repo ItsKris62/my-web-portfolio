@@ -1,7 +1,7 @@
-'use client';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { motion } from 'framer-motion';
+"use client";
+
+import { useState } from "react";
+import { motion } from "framer-motion";
 import ReCAPTCHA from 'react-google-recaptcha';
 import { Player as Lottie } from '@lottiefiles/react-lottie-player';
 
@@ -12,38 +12,60 @@ interface FormData {
 }
 
 export default function ContactForm() {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>();
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    message: ''
+  });
+  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const onSubmit = async (data: FormData) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const validate = () => {
+    const newErrors: Partial<Record<keyof FormData, string>> = {};
+
+    if (!formData.name.trim()) newErrors.name = "Name is required.";
+    else if (formData.name.length > 50) newErrors.name = "Name must be less than 50 characters.";
+
+    if (!formData.email.trim()) newErrors.email = "Email is required.";
+    else if (!/^\S+@\S+$/.test(formData.email)) newErrors.email = "Invalid email format.";
+
+    if (!formData.message.trim()) newErrors.message = "Message is required.";
+    else if (formData.message.length > 500) newErrors.message = "Message must be less than 500 characters.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+
     if (!recaptchaToken) {
-      alert('Please complete the reCAPTCHA.');
+      alert("Please complete the reCAPTCHA.");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const response = await fetch('/api/send-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, recaptchaToken }),
-      });
+      // Mock API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      if (response.ok) {
-        setShowSuccess(true);
-        reset();
-        setTimeout(() => setShowSuccess(false), 3000); // Hide animation after 3 seconds
-      } else {
-        const error = await response.json();
-        alert(error.message || 'Failed to send message.');
-      }
+      setShowSuccess(true);
+      setFormData({ name: '', email: '', message: '' });
+      setRecaptchaToken(null);
+
+      setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {
-      alert('An error occurred. Please try again.');
+      alert("An error occurred. Please try again later.");
     } finally {
       setIsSubmitting(false);
-      setRecaptchaToken(null);
     }
   };
 
@@ -51,10 +73,10 @@ export default function ContactForm() {
     <div className="relative">
       {showSuccess && (
         <motion.div
-          className="absolute inset-0 flex items-center justify-center z-20"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          className="absolute inset-0 flex items-center justify-center z-20 backdrop-blur-sm"
         >
           <Lottie
             autoplay
@@ -64,49 +86,70 @@ export default function ContactForm() {
           />
         </motion.div>
       )}
+
       <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={`space-y-4 backdrop-blur-md bg-white/10 p-6 rounded-xl border border-white/20 ${showSuccess ? 'opacity-50' : ''}`}
+        onSubmit={onSubmit}
+        className={`space-y-6 p-8 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 shadow-lg transition-all ${
+          showSuccess ? "opacity-50 pointer-events-none" : ""
+        }`}
       >
         <div>
+          <label htmlFor="name" className="block text-sm font-medium mb-1">Your Name</label>
           <input
-            {...register('name', { required: 'Name is required', maxLength: { value: 50, message: 'Name must be less than 50 characters' } })}
-            placeholder="Name"
-            className="w-full p-3 bg-transparent border border-white/20 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="John Doe"
+            className="w-full px-4 py-3 rounded-lg bg-transparent border border-white/30 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
           />
-          {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+          {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
         </div>
+
         <div>
+          <label htmlFor="email" className="block text-sm font-medium mb-1">Your Email</label>
           <input
-            {...register('email', { required: 'Email is required', pattern: { value: /^\S+@\S+$/i, message: 'Invalid email' } })}
-            placeholder="Email"
-            className="w-full p-3 bg-transparent border border-white/20 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="you@example.com"
+            className="w-full px-4 py-3 rounded-lg bg-transparent border border-white/30 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
           />
-          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
         </div>
+
         <div>
+          <label htmlFor="message" className="block text-sm font-medium mb-1">Your Message</label>
           <textarea
-            {...register('message', { required: 'Message is required', maxLength: { value: 500, message: 'Message must be less than 500 characters' } })}
-            placeholder="Message"
-            className="w-full p-3 bg-transparent border border-white/20 rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            id="message"
+            name="message"
             rows={4}
+            value={formData.message}
+            onChange={handleChange}
+            placeholder="Tell me about your project..."
+            className="w-full px-4 py-3 rounded-lg bg-transparent border border-white/30 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
           />
-          {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>}
+          {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message}</p>}
         </div>
-        <div className="flex justify-center">
+
+        <div className="flex justify-center my-2">
           <ReCAPTCHA
-            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "dummy-site-key"}
             onChange={(token: string | null) => setRecaptchaToken(token)}
           />
         </div>
+
         <motion.button
           type="submit"
-          className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg disabled:opacity-50"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
           disabled={isSubmitting}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full py-3 px-6 rounded-lg bg-primary text-primary-foreground font-medium transition-colors hover:bg-opacity-90 disabled:opacity-60"
         >
-          {isSubmitting ? 'Sending...' : 'Send Message'}
+          {isSubmitting ? "Sending..." : "Send Message"}
         </motion.button>
       </form>
     </div>

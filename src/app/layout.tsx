@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
+import { Toaster } from 'react-hot-toast';
+
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -48,11 +51,11 @@ export default function RootLayout({
         <link rel="preload" href="/assets/pattern-1.png" as="image" />
         <link rel="preload" href="/assets/pattern-2.png" as="image" />
       </head>
-      <body
-        className={`${inter.variable} ${playfair.variable} antialiased bg-background text-foreground`}
-      >
-        {children}
+      <body className={`${inter.variable} ${playfair.variable} antialiased bg-background text-foreground`}>
+          {children}
+        <Toaster position="bottom-center" reverseOrder={false} />
       </body>
+
     </html>
   );
 }

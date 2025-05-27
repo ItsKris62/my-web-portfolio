@@ -1,8 +1,9 @@
-'use client';
-import ParallaxWrapper from '../animations/ParallaxWrapper';
-import { motion } from 'framer-motion';
-import { Download } from 'lucide-react';
-import Image from 'next/image';
+"use client";
+
+import ParallaxWrapper from "../animations/ParallaxWrapper";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import { Download } from "lucide-react";
 
 export default function Hero() {
   return (
@@ -10,60 +11,65 @@ export default function Hero() {
       className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
       style={{ backgroundImage: "url('/images/pattern-1.png')" }}
     >
-      {/* Background Image with Parallax */}
-      <ParallaxWrapper offset={150} startOffset={-300} endOffset={300}>
-        <div className="absolute inset-0 flex items-center justify-center">
+      {/* Background Overlay */}
+      <div className="absolute inset-0 bg-black/30" />
+
+      {/* Profile Image (Right Side) */}
+      {/* <ParallaxWrapper offset={150} startOffset={-300} endOffset={300}>*/}
+        <div className="absolute inset-y-0 right-0 w-1/2 md:w-1/3 z-[1]"> {/* Ensures image is above overlay, below text content */}
           <Image
-            src="/images/myself.gng"
+            src="/images/myself.png"
             alt="Christopher Rateng"
             fill
-            className="object-contain grayscale"
+            className="object-contained rounded-full shadow-lg"
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             priority
           />
         </div>
-      </ParallaxWrapper>
+     {/* </ParallaxWrapper> */}
 
-      {/* Overlay for Contrast */}
-      <div className="absolute inset-0 bg-black/30" />
 
-      {/* Content */}
-      <div className="relative z-10 text-center text-white">
+
+      {/* Content (Left Side) */}
+      <div className="relative z-10 max-w-xl px-6 text-white">
         {/* Stats */}
-        <div className="flex justify-center gap-8 mb-8">
+        <div className="flex flex-col md:flex-row gap-8 mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <p className="text-4xl font-bold">3+</p>
-            <p className="text-sm">Years Experience</p>
+            <p className="text-4xl font-bold">+200</p>
+            <p className="text-sm">Projects Completed</p>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <p className="text-4xl font-bold">5+</p>
-            <p className="text-sm">Projects Completed</p>
+            <p className="text-4xl font-bold">+50</p>
+            <p className="text-sm">Startup Raised</p>
           </motion.div>
         </div>
 
         {/* Greeting */}
-        <ParallaxWrapper offset={80} startOffset={-200} endOffset={200}>
-          <h1 className="text-7xl md:text-9xl font-display">Hello</h1>
-        </ParallaxWrapper>
-        <ParallaxWrapper offset={40} startOffset={-150} endOffset={150}>
-          <p className="text-xl md:text-2xl font-sans mt-4">
-            I’m Christopher Rateng — IT Systems Engineer & Web Developer
-          </p>
-        </ParallaxWrapper>
+        <div className="mb-8">
+          <ParallaxWrapper offset={80} startOffset={-200} endOffset={200}>
+            <h1 className="text-7xl md:text-9xl font-display">Hello</h1>
+          </ParallaxWrapper>
+          <ParallaxWrapper offset={40} startOffset={-150} endOffset={150}>
+            <p className="text-xl md:text-2xl font-sans mt-4">
+              I’m Christopher Rateng — IT Systems Engineer & Web Developer
+            </p>
+          </ParallaxWrapper>
+        </div>
 
         {/* Download Button */}
         <motion.a
           href="/assets/resume.pdf"
           download
           className="inline-flex items-center mt-8 px-6 py-3 bg-primary text-primary-foreground rounded-lg shadow-lg"
-          whileHover={{ scale: 1.1, boxShadow: '0 0 15px rgba(39, 135, 131, 0.5)' }}
+          whileHover={{ scale: 1.1, boxShadow: "0 0 15px rgba(39, 135, 131, 0.5)" }}
           whileTap={{ scale: 0.9 }}
           animate={{ y: [0, -10, 0] }}
           transition={{ repeat: Infinity, duration: 1.5 }}
