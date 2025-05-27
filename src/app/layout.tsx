@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     title: "Christopher Rateng | IT Systems Engineer & Web Developer",
     description:
       "Portfolio of Christopher Modicai Rateng, showcasing skills in IT systems, cybersecurity, and web development.",
-    url: "https://your-portfolio-url.com", // Replace with your deployed URL
+    url: "https://crateng.vercel.com", // Replace with your deployed URL
     siteName: "Christopher Rateng Portfolio",
     images: [
       {
