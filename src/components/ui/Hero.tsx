@@ -4,8 +4,26 @@ import ParallaxWrapper from "../animations/ParallaxWrapper";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Download } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function Hero() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return (
+      <section className="relative min-h-screen flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: "url('/images/pattern-1.png')" }}>
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="relative z-10 max-w-xl px-6 text-white">
+          <h1 className="text-7xl md:text-9xl font-display">Loading...</h1>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       className="relative min-h-screen flex items-center justify-center bg-cover bg-center"
@@ -59,7 +77,7 @@ export default function Hero() {
           </ParallaxWrapper>
           <ParallaxWrapper offset={40} startOffset={-150} endOffset={150}>
             <p className="text-xl md:text-2xl font-sans mt-4">
-              I’m Christopher Rateng — IT Systems Engineer & Web Developer
+              I&apos;m Christopher Rateng — IT Systems Engineer & Web Developer
             </p>
           </ParallaxWrapper>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import ParallaxWrapper from "../animations/ParallaxWrapper";
+import Image from "next/image";
 
 // Animation variants for the section
 const containerVariants = {
@@ -103,16 +104,18 @@ const Summary = () => {
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
-                <img
+                <Image
                   src="/images/me_official.jpg"
                   alt="Christopher Rateng"
-                  className="w-32 h-32 rounded-full border-4 border-[#4AB8B3]/30 shadow-md object-cover"
+                  width={128}
+                  height={128}
+                  className="rounded-full border-4 border-[#4AB8B3]/30 shadow-md object-cover"
                 />
               </motion.div>
               {/* Summary Text */}
               <div className="text-center md:text-left">
                 <p className="text-lg font-['Inter'] text-[#278783] leading-relaxed">
-                  I’m a detail-oriented IT professional with over three years of experience in technical support, system administration, and network management. I’ve successfully optimized workflows, reduced downtime by 25%, and enhanced system stability through automation and proactive troubleshooting. Skilled in managing Microsoft 365 for 50+ users and implementing security measures, I thrive in dynamic environments, driving efficiency and innovation.
+                  I&apos;m a detail-oriented IT professional with over three years of experience in technical support, system administration, and network management. I&apos;ve successfully optimized workflows, reduced downtime by 25%, and enhanced system stability through automation and proactive troubleshooting. Skilled in managing Microsoft 365 for 50+ users and implementing security measures, I thrive in dynamic environments, driving efficiency and innovation.
                 </p>
                 <motion.a
                   href="#contact"

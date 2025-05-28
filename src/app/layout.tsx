@@ -16,6 +16,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://crateng.vercel.com'),
   title: "Christopher Rateng | IT Systems Engineer & Web Developer",
   description:
     "Portfolio of Christopher Modicai Rateng, an IT Systems Engineer with expertise in cybersecurity, system administration, and web development. Explore my projects, skills, and experience.",

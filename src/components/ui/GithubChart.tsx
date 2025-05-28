@@ -3,54 +3,12 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { format, subDays } from "date-fns"; // For date formatting and manipulation
+import dynamic from 'next/dynamic';
 
-interface ContributionDay {
-  date: string;
-  count: number;
-  level: number;
-}
-
-const GitHubChart = () => {
-  const [contributions, setContributions] = useState<ContributionDay[]>([]);
+// Dynamically import the chart component with no SSR
+const GitHubChartComponent = dynamic(() => Promise.resolve(({ contributions }: { contributions: ContributionDay[] }) => {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-50px" });
-
-  // Fetch GitHub contribution data
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/api/github");
-        const data = await response.json();
-        if (data.contributions) {
-          setContributions(data.contributions);
-        } else {
-          // Fallback mock data for demo purposes (remove in production)
-          const mockData = Array.from({ length: 365 }, (_, i) => {
-            const date = subDays(new Date("2025-05-27"), 364 - i);
-            return {
-              date: format(date, "yyyy-MM-dd"),
-              count: Math.floor(Math.random() * 20),
-              level: Math.floor(Math.random() * 5),
-            };
-          });
-          setContributions(mockData);
-        }
-      } catch (error) {
-        console.error("Error fetching GitHub data:", error);
-        // Fallback mock data in case of error
-        const mockData = Array.from({ length: 365 }, (_, i) => {
-          const date = subDays(new Date("2025-05-27"), 364 - i);
-          return {
-            date: format(date, "yyyy-MM-dd"),
-            count: Math.floor(Math.random() * 20),
-            level: Math.floor(Math.random() * 5),
-          };
-        });
-        setContributions(mockData);
-      }
-    };
-    fetchData();
-  }, []);
 
   // Animation variants for the section
   const containerVariants = {
@@ -87,6 +45,8 @@ const GitHubChart = () => {
 
   // Smooth scrolling handler
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const section = document.getElementById("github");
     if (section) {
       section.style.scrollBehavior = "smooth";
@@ -267,6 +227,72 @@ const GitHubChart = () => {
       </div>
     </section>
   );
+}), { ssr: false });
+
+interface ContributionDay {
+  date: string;
+  count: number;
+  level: number;
+}
+
+const GitHubChart = () => {
+  const [contributions, setContributions] = useState<ContributionDay[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/github");
+        const data = await response.json();
+        if (data.contributions) {
+          setContributions(data.contributions);
+        } else {
+          // Fallback mock data
+          const mockData = Array.from({ length: 365 }, (_, i) => {
+            const date = subDays(new Date(), 365 - i);
+            return {
+              date: format(date, "yyyy-MM-dd"),
+              count: Math.floor(Math.random() * 10),
+              level: Math.floor(Math.random() * 5),
+            };
+          });
+          setContributions(mockData);
+        }
+      } catch (error) {
+        console.error("Error fetching GitHub contributions:", error);
+        // Fallback to mock data on error
+        const mockData = Array.from({ length: 365 }, (_, i) => {
+          const date = subDays(new Date(), 365 - i);
+          return {
+            date: format(date, "yyyy-MM-dd"),
+            count: Math.floor(Math.random() * 10),
+            level: Math.floor(Math.random() * 5),
+          };
+        });
+        setContributions(mockData);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <section className="py-24 bg-[#FFEBD0] relative overflow-hidden">
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center">
+            <h2 className="text-4xl md:text-5xl font-['Playfair_Display'] text-[#278783] mb-4">
+              Loading GitHub Contributions...
+            </h2>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  return <GitHubChartComponent contributions={contributions} />;
 };
 
 export default GitHubChart;

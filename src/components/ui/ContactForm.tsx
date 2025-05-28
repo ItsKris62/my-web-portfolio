@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import ReCAPTCHA from 'react-google-recaptcha';
+import dynamic from 'next/dynamic';
 import { Player as Lottie } from '@lottiefiles/react-lottie-player';
+
+// Dynamically import ReCAPTCHA with no SSR
+const ReCAPTCHA = dynamic(() => import('react-google-recaptcha'), {
+  ssr: false
+});
 
 interface FormData {
   name: string;
@@ -21,6 +26,22 @@ export default function ContactForm() {
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return (
+      <div className="space-y-6 p-8 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 shadow-lg">
+        <div className="h-12 bg-gray-200 rounded animate-pulse" />
+        <div className="h-12 bg-gray-200 rounded animate-pulse" />
+        <div className="h-32 bg-gray-200 rounded animate-pulse" />
+        <div className="h-12 bg-gray-200 rounded animate-pulse" />
+      </div>
+    );
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -62,7 +83,7 @@ export default function ContactForm() {
       setRecaptchaToken(null);
 
       setTimeout(() => setShowSuccess(false), 3000);
-    } catch (error) {
+    } catch {
       alert("An error occurred. Please try again later.");
     } finally {
       setIsSubmitting(false);

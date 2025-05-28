@@ -8,10 +8,10 @@ import {
   faOrcid,
   faStackOverflow,
   faLinkedin,
-  faPeerlist,
 } from "@fortawesome/free-brands-svg-icons";
 import { faEnvelope, faPhone, faLocationDot, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import ParallaxWrapper from "../animations/ParallaxWrapper";
+import { useEffect, useState } from "react";
 
 // Define animation variants for sections
 const containerVariants = {
@@ -45,13 +45,18 @@ const linkHover = {
 };
 
 const Footer = () => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const socialLinks = [
     { icon: faGithub, href: "https://github.com/ItsKris62", label: "GitHub", color: "#333" },
     { icon: faLinkedin, href: "https://linkedin.com/in/crateng13", label: "LinkedIn", color: "#0077B5" },
     { icon: faCodepen, href: "https://codepen.io/ItsKris62", label: "CodePen", color: "#000" },
     { icon: faStackOverflow, href: "https://stackoverflow.com/users/ItsKris62", label: "StackOverflow", color: "#F58025" },
     { icon: faOrcid, href: "https://orcid.org/0000-0002-1825-0097", label: "ORCID", color: "#A6CE39" },
-    { icon: faPeerlist, href: "https://peerlist.io/ItsKris62", label: "Peerlist", color: "#00AA45" },
   ];
 
   const contactInfo = [
@@ -70,8 +75,22 @@ const Footer = () => {
   ];
 
   const scrollToTop = () => {
+    if (typeof window === 'undefined') return;
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  if (!isMounted) {
+    return (
+      <footer className="relative bg-[#1A5F5B] text-[#FFEBD0] py-12 px-6 overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center">
+            <div className="h-8 bg-gray-200 rounded animate-pulse mx-auto w-48 mb-4" />
+            <div className="h-4 bg-gray-200 rounded animate-pulse mx-auto w-64" />
+          </div>
+        </div>
+      </footer>
+    );
+  }
 
   return (
     <ParallaxWrapper offset={20}>
