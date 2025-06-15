@@ -1,0 +1,8 @@
+// Centering
+@mixin center-flex { display: flex; justify-content: center; align-items: center; }
+
+// Themed background
+@mixin theme-bg($light, $dark) {
+  background-color: $light;
+  .dark & { background-color: $dark; }
+}

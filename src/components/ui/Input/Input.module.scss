@@ -1,0 +1,11 @@
+.container {
+  @apply flex flex-col mb-4;
+}
+
+.label {
+  @apply mb-2 text-sm font-medium text-gray-200;
+}
+
+.input {
+  @apply px-4 py-2 bg-gray-800 text-white rounded-md border border-gray-700 focus:border-indigo-500 outline-none transition;
+}

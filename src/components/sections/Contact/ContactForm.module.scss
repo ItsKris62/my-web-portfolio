@@ -1,0 +1,9 @@
+.form {
+  @apply flex flex-col max-w-lg mx-auto space-y-4;
+}
+.input {
+  @apply px-4 py-2 bg-gray-800 text-white rounded-md border border-gray-700 focus:border-indigo-500 outline-none;
+}
+.textarea {
+  @apply px-4 py-2 bg-gray-800 text-white rounded-md border border-gray-700 focus:border-indigo-500 outline-none h-32 resize-none;
+}

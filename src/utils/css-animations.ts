@@ -1,0 +1,1 @@
+export const pulse = { animation: 'pulseInject 1.5s infinite' }

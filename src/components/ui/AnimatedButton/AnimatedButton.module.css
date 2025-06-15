@@ -1,0 +1,10 @@
+.button {
+  @apply relative overflow-hidden px-6 py-3 bg-indigo-600 text-white font-mono rounded-lg;
+  transition: transform 0.2s ease-in-out;
+}
+.button:hover {
+  animation: pulseInject 1.5s ease-in-out infinite;
+}
+.inject {
+  @apply absolute inset-0 pointer-events-none bg-white opacity-20 mix-blend-screen animate-codeInject;
+}

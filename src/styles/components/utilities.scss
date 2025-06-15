@@ -1,0 +1,5 @@
+// Utility classes for custom behaviors
+
+.hidden { display: none !important; }
+.center-xy { @include center-flex; }
+.transition-all { transition: all 0.3s ease-in-out; }

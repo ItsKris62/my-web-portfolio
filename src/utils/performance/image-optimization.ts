@@ -1,0 +1,1 @@
+export function optimizeSrc(src: string) { return src + '?auto=format&fit=max' }

@@ -1,0 +1,9 @@
+.header {
+  @apply fixed top-0 w-full bg-gray-900 bg-opacity-80 backdrop-blur-md z-50;
+}
+.nav {
+  @apply flex justify-center space-x-8 py-4;
+}
+.link {
+  @apply text-white hover:text-indigo-400 transition-colors;
+}

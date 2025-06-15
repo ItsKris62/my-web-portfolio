@@ -1,0 +1,15 @@
+.navbar {
+  @apply fixed w-full bg-gray-800 bg-opacity-80 backdrop-blur z-50;
+}
+.container {
+  @apply max-w-6xl mx-auto flex items-center justify-between py-4 px-6;
+}
+.logo {
+  @apply text-2xl font-bold text-indigo-400 hover:text-indigo-300;
+}
+.menu {
+  @apply flex space-x-6 text-gray-200;
+  li a {
+    @apply hover:text-white transition-colors;
+  }
+}

@@ -1,0 +1,1 @@
+export function lazyLoadImage(img: HTMLImageElement) { img.loading = 'lazy' }
