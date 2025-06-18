@@ -1,26 +1,19 @@
-@import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+@font-face{font-family:'Orbitron';src:url('/assets/fonts/Orbitron-Regular.ttf') format('truetype');font-weight:400;font-style:normal;}
+@font-face{font-family:'Rajdhani';src:url('/assets/fonts/Rajdhani-Regular.ttf') format('truetype');font-weight:400;font-style:normal;}
+@font-face{font-family:'TitilliumWeb';src:url('/assets/fonts/TitilliumWeb-Regular.ttf') format('truetype');font-weight:400;font-style:normal;}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+body { @apply bg-background-dark text-text-primary font-sans; }
+
+h1,h2,h3,h4,h5,h6 { font-family: 'Orbitron', sans-serif; }
+
+.bg-parallax {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
 }
