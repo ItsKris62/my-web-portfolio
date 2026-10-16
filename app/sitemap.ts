@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next'
-import { publishedProjects } from '@/lib/data'
+import { publishedProjects, siteConfig } from '@/lib/data'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://christopherrateng.com'
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || siteConfig.siteUrl || 'https://crateng.co.ke'
   const currentDate = new Date()
 
   const projectRoutes: MetadataRoute.Sitemap = publishedProjects.map((project) => ({

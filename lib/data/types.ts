@@ -134,5 +134,6 @@ export interface SiteConfig {
   tagline: string
   secondaryTagline: string
   positioning: string
+  siteUrl: string
   contact: ContactInfo
 }

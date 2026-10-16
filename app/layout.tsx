@@ -3,7 +3,7 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { siteConfig } from '@/lib/data'
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://christopherrateng.com'
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || siteConfig.siteUrl || 'https://crateng.co.ke'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   const project = getProjectBySlug(slug)
   if (!project) return { title: 'Project not found' }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://christopherrateng.com'
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || siteConfig.siteUrl || 'https://crateng.co.ke'
   const ogImage = project.desktopScreenshots?.[0]?.src
     ? `${siteUrl}${project.desktopScreenshots[0].src}`
     : `${siteUrl}/branding/christopher-rateng-logo-social.png`
@@ -83,7 +83,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     )
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://christopherrateng.com'
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || siteConfig.siteUrl || 'https://crateng.co.ke'
   const ogImage = project.desktopScreenshots?.[0]?.src
     ? `${siteUrl}${project.desktopScreenshots[0].src}`
     : `${siteUrl}/branding/christopher-rateng-logo-social.png`
