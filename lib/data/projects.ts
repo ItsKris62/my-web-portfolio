@@ -93,7 +93,7 @@ export const projects: Project[] = [
     ],
     mobileScreenshots: [],
     outcomes: [],
-    websiteUrl: 'https://app.sheriabot.com',
+    websiteUrl: 'https://adek-tatu.vercel.app',
     repositoryUrl: undefined,
     publishStatus: 'published',
     publicationApproved: true,
