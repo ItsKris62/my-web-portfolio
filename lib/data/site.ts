@@ -15,6 +15,6 @@ export const siteConfig: SiteConfig = {
     serviceRegions: 'Kenya, East Africa & Remote worldwide',
     linkedin: 'https://www.linkedin.com/in/christopher-rateng/',
     github: 'https://github.com/ItsKris62',
-    // resumeUrl is intentionally undefined until a résumé file is published.
+    resumeUrl: '/documents/Christopher_Rateng_Information_Security_Resume.pdf',
   },
 }
