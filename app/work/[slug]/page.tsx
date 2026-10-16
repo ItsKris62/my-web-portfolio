@@ -24,13 +24,46 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   const { slug } = await params
   const project = getProjectBySlug(slug)
   if (!project) return { title: 'Project not found' }
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://christopherrateng.com'
+  const ogImage = project.desktopScreenshots?.[0]?.src
+    ? `${siteUrl}${project.desktopScreenshots[0].src}`
+    : `${siteUrl}/branding/christopher-rateng-logo-social.png`
+
   return {
-    title: `${project.title} — ${siteConfig.name}`,
+    title: `${project.title} — Case Study by ${siteConfig.name}`,
     description: project.description,
+    keywords: [
+      project.title,
+      project.category,
+      ...project.technologies,
+      'Christopher Rateng',
+      'Case Study',
+      'Software Architecture',
+      'Kenya',
+    ],
+    alternates: {
+      canonical: `${siteUrl}/work/${slug}`,
+    },
     openGraph: {
-      title: `${project.title} — ${siteConfig.name}`,
+      title: `${project.title} — Case Study by ${siteConfig.name}`,
       description: project.description,
       type: 'article',
+      url: `${siteUrl}/work/${slug}`,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: `${project.title} showcase`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${project.title} — Case Study by ${siteConfig.name}`,
+      description: project.description,
+      images: [ogImage],
     },
   }
 }
@@ -50,8 +83,61 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     )
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://christopherrateng.com'
+  const ogImage = project.desktopScreenshots?.[0]?.src
+    ? `${siteUrl}${project.desktopScreenshots[0].src}`
+    : `${siteUrl}/branding/christopher-rateng-logo-social.png`
+
+  const projectStructuredData = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: siteUrl,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Selected Work',
+            item: `${siteUrl}/#work`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: project.title,
+            item: `${siteUrl}/work/${slug}`,
+          },
+        ],
+      },
+      {
+        '@type': 'CreativeWork',
+        name: project.title,
+        headline: project.description,
+        description: project.overview || project.description,
+        url: `${siteUrl}/work/${slug}`,
+        image: ogImage,
+        author: {
+          '@type': 'Person',
+          name: siteConfig.fullName,
+          url: siteUrl,
+        },
+        keywords: project.technologies.join(', '),
+        datePublished: `${project.year}-01-01`,
+      },
+    ],
+  }
+
   return (
     <div className="site-shell project-detail">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectStructuredData) }}
+      />
       <main id="top">
         <section className="hero section-pad project-hero">
           <Link className="text-link back-link" href="/#work"><ChevronLeft aria-hidden="true" /> Back to work</Link>
