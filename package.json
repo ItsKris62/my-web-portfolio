@@ -1,6 +1,5 @@
-I have a github repo which had my old web portfolio on the main branch,  https://github.com/ItsKris62/my-web-portfolio.git 
- I want this new upgraded web portfolio on the same github repo but on a different branch and I will make that branch the default.{
-  "name": "my-project",
+{
+  "name": "christopher-rateng-portfolio",
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@10.30.0",
