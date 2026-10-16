@@ -40,8 +40,17 @@ export const projects: Project[] = [
       'Cloud deployment and operational monitoring',
     ],
     technologies: ['Next.js', 'TypeScript', 'PostgreSQL', 'AI workflows', 'Node.js'],
-    coverImage: undefined,
-    desktopScreenshots: [],
+    coverImage: '/og/SheriaBot AI User Dashboard.png',
+    desktopScreenshots: [
+      {
+        src: '/og/SheriaBot AI User Dashboard.png',
+        alt: 'SheriaBot AI User Dashboard — Regulatory Intelligence & Compliance Platform',
+      },
+      {
+        src: '/og/sheriabot_admin.png',
+        alt: 'SheriaBot Administration Console & Workflow Controls',
+      },
+    ],
     mobileScreenshots: [],
     outcomes: [
       'Regulatory intelligence workflow for African fintech markets',
@@ -75,8 +84,12 @@ export const projects: Project[] = [
       'Deployment and hosting configuration',
     ],
     technologies: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Vercel'],
+    coverImage: '/og/adek_tatu_website.png',
     desktopScreenshots: [
-      { src: '/placeholder.jpg', alt: 'Adek Tatu desktop preview pending', placeholder: true },
+      {
+        src: '/og/adek_tatu_website.png',
+        alt: 'Adek Tatu — Modern Client Website & Brand Presentation',
+      },
     ],
     mobileScreenshots: [],
     outcomes: [],
@@ -97,7 +110,7 @@ export const projects: Project[] = [
     year: '2025',
     role: 'Web Developer',
     description:
-      'A website for Kolwa Beba SACCO, presenting the organisation\u2019s digital presence through a professional and accessible web experience.',
+      'A website for Kolwa Beba SACCO, presenting the organisation’s digital presence through a professional and accessible web experience.',
     fullDescription: undefined,
     overview:
       'A website project for a SACCO, demonstrating a trustworthy, clear, and professional digital presence for a financial-services organisation.',
@@ -107,8 +120,12 @@ export const projects: Project[] = [
       'Responsive and accessible layout development',
     ],
     technologies: ['Next.js', 'TypeScript', 'Tailwind CSS'],
+    coverImage: '/og/kolwa_admin_dashboard.png',
     desktopScreenshots: [
-      { src: '/placeholder.jpg', alt: 'Kolwa Beba SACCO desktop preview pending', placeholder: true },
+      {
+        src: '/og/kolwa_admin_dashboard.png',
+        alt: 'Kolwa Beba SACCO — Digital Administrative Portal & Member Management',
+      },
     ],
     mobileScreenshots: [],
     outcomes: [],

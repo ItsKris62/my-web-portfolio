@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -73,7 +74,12 @@ const serviceIconMap: Record<string, React.ComponentType<{ className?: string; '
 }
 
 function Mark() {
-  return <span className="mark" aria-hidden="true">CR<span>.</span></span>
+  return (
+    <span className="mark-wrap" aria-hidden="true">
+      <img src="/branding/christopher-rateng-logo-icon.png" alt="" className="mark-logo" />
+      <span className="mark">CR<span>.</span></span>
+    </span>
+  )
 }
 
 function SpatialSystem() {
@@ -124,7 +130,22 @@ export default function PortfolioPage() {
             <div className="hero-meta"><span>Cybersecurity · Infrastructure · Software · AI Automation</span><span>{siteConfig.contact.location} / Remote worldwide</span></div>
           </div>
           <div className="hero-visual">
-            <div className="portrait-frame"><div className="portrait-placeholder"><span>Portrait<br />to come</span><small>CHRISTOPHER / 001</small></div></div>
+            <div className="portrait-frame">
+              <div className="portrait-container">
+                <Image
+                  src="/portraits/Christopher_rateng-Passport-Photo.jpg"
+                  alt="Christopher Modicai Rateng"
+                  fill
+                  priority
+                  sizes="(max-width: 800px) 70vw, 420px"
+                  className="portrait-photo"
+                />
+                <div className="portrait-overlay">
+                  <span>Christopher M. Rateng</span>
+                  <small>SYSTEMS · SECURITY · AUTOMATION</small>
+                </div>
+              </div>
+            </div>
             <SpatialSystem />
             <span className="visual-coordinate">01° 17′ S / 36° 49′ E</span>
           </div>
@@ -146,9 +167,9 @@ export default function PortfolioPage() {
 
         <section id="skills" className="skills section-pad ruled-section"><div className="section-label"><span>04</span><span>Technical capabilities</span></div><div className="skills-heading"><h2>A broad toolkit,<br /><em>applied to real</em><br />business problems.</h2><p>From identity and networking to security, development and automation — the technologies I use to design, implement and maintain dependable systems.</p></div><div className="skills-grid">{skillGroups.map((group) => <article className="skill-group" key={group.id}><h3>{group.label}</h3><ul className="skill-list">{group.skills.map((skill) => <li key={skill}>{skill}</li>)}</ul></article>)}</div></section>
 
-        <section id="work" className="work section-pad"><div className="section-label"><span>05</span><span>Selected work</span></div><div className="work-heading"><h2>Proof is in<br /><em>what you build.</em></h2><p>A collection of software, digital experiences, infrastructure projects, and technical experiments.</p></div><div className="project-filters" role="tablist" aria-label="Filter projects by category">{projectCategories.map((cat) => <button key={cat.id} role="tab" aria-selected={activeCategory === cat.id} className={activeCategory === cat.id ? 'filter-active' : ''} onClick={() => setActiveCategory(cat.id)}>{cat.label}</button>)}</div><div className="projects">{filteredProjects.map(({ slug, title, category, description, technologies, featured, projectType, year, websiteUrl, desktopScreenshots }) => <article className={`project ${featured ? 'featured' : ''}`} key={slug}><a className="project-link" href={`/work/${slug}`} aria-label={`View case study for ${title}`}><div className="project-visual"><div className="project-lines" /><span className="project-type">{category}</span>{featured ? <div className="project-core"><span>Sheria</span><strong>Bot</strong><small>REGULATORY INTELLIGENCE</small></div> : desktopScreenshots && desktopScreenshots.length > 0 ? <div className="project-screenshot"><img src={desktopScreenshots[0].src} alt={desktopScreenshots[0].alt} /></div> : <div className="project-placeholder"><span>{projectType}</span></div>}<span className="project-year">{year}</span></div><div className="project-info"><div><h3>{title}</h3><p>{description}</p></div><div className="project-footer"><span>{technologies.join(' · ')}</span><span className="case-study">View case study <ArrowUpRight aria-hidden="true" /></span></div></div></a>{websiteUrl ? <a className="project-visit" href={websiteUrl} target="_blank" rel="noreferrer" aria-label={`Visit ${title} website`}>Visit site <ExternalLink aria-hidden="true" /></a> : null}</article>)}</div></section>
+        <section id="work" className="work section-pad"><div className="section-label"><span>05</span><span>Selected work</span></div><div className="work-heading"><h2>Proof is in<br /><em>what you build.</em></h2><p>A collection of software, digital experiences, infrastructure projects, and technical experiments.</p></div><div className="project-filters" role="tablist" aria-label="Filter projects by category">{projectCategories.map((cat) => <button key={cat.id} role="tab" aria-selected={activeCategory === cat.id} className={activeCategory === cat.id ? 'filter-active' : ''} onClick={() => setActiveCategory(cat.id)}>{cat.label}</button>)}</div><div className="projects">{filteredProjects.map(({ slug, title, category, description, technologies, featured, projectType, year, websiteUrl, desktopScreenshots }) => <article className={`project ${featured ? 'featured' : ''}`} key={slug}><a className="project-link" href={`/work/${slug}`} aria-label={`View case study for ${title}`}><div className="project-visual"><div className="project-lines" /><span className="project-type">{category}</span>{featured ? <div className="project-screenshot project-featured-render">{desktopScreenshots && desktopScreenshots.length > 0 ? (<><img src={desktopScreenshots[0].src} alt={desktopScreenshots[0].alt} /><div className="project-core project-core-badge"><span>Sheria</span><strong>Bot</strong><small>REGULATORY INTELLIGENCE</small></div></>) : (<div className="project-core"><span>Sheria</span><strong>Bot</strong><small>REGULATORY INTELLIGENCE</small></div>)}</div> : desktopScreenshots && desktopScreenshots.length > 0 ? <div className="project-screenshot"><img src={desktopScreenshots[0].src} alt={desktopScreenshots[0].alt} /></div> : <div className="project-placeholder"><span>{projectType}</span></div>}<span className="project-year">{year}</span></div><div className="project-info"><div><h3>{title}</h3><p>{description}</p></div><div className="project-footer"><span>{technologies.join(' · ')}</span><span className="case-study">View case study <ArrowUpRight aria-hidden="true" /></span></div></div></a>{websiteUrl ? <a className="project-visit" href={websiteUrl} target="_blank" rel="noreferrer" aria-label={`Visit ${title} website`}>Visit site <ExternalLink aria-hidden="true" /></a> : null}</article>)}</div></section>
 
-        <section id="education" className="education section-pad ruled-section"><div className="section-label"><span>06</span><span>Education &amp; research</span></div><div className="education-heading"><h2>Built on a<br /><em>strong technical</em><br />foundation.</h2><p>Formal training and active research in information systems, networking, and information security.</p></div><div className="education-grid">{education.map((ed) => <article className="education-item" key={ed.degree}><div className="education-degree"><GraduationCap aria-hidden="true" /><h3>{ed.degree}</h3></div><p className="education-field">{ed.field}</p><p className="education-school">{ed.institution}</p><p className="education-year">{ed.year}{ed.status === 'in-progress' ? ' (in progress)' : ''}</p></article>)}</div><div className="research-block"><span className="eyebrow"><span className="eyebrow-dot" /> Active research</span><h3>{research.title}</h3><p>{research.description}</p><div className="research-interests"><strong>Research interests:</strong><ul>{research.interests.map((i) => <li key={i}>{i}</li>)}</ul></div>{research.context && <p className="research-context">{research.context}</p>}</div></section>
+        <section id="education" className="education section-pad ruled-section"><div className="section-label"><span>06</span><span>Education &amp; research</span></div><div className="education-heading"><h2>Built on a<br /><em>strong technical</em><br />foundation.</h2><p>Formal training and active research in information systems, networking, and information security.</p></div><div className="education-grid">{education.map((ed) => <article className="education-item" key={ed.degree}><div className="education-header"><div className="education-degree"><GraduationCap aria-hidden="true" /><h3>{ed.degree}</h3></div><img src="/logos/usiu-logo.png" alt="USIU-Africa" className="usiu-badge" /></div><p className="education-field">{ed.field}</p><p className="education-school">{ed.institution}</p><p className="education-year">{ed.year}{ed.status === 'in-progress' ? ' (in progress)' : ''}</p></article>)}</div><div className="research-block"><span className="eyebrow"><span className="eyebrow-dot" /> Active research</span><h3>{research.title}</h3><p>{research.description}</p><div className="research-interests"><strong>Research interests:</strong><ul>{research.interests.map((i) => <li key={i}>{i}</li>)}</ul></div>{research.context && <p className="research-context">{research.context}</p>}</div></section>
 
         <section id="credentials" className="credentials section-pad ruled-section"><div className="section-label"><span>07</span><span>Certifications</span></div><div className="credentials-heading"><h2>Verified<br /><em>professional</em><br />credentials.</h2><p>Industry certifications across cybersecurity, networking, and information technology fundamentals.</p></div><div className="credentials-grid">{certifications.map((cert) => <article className="credential" key={cert.title}><div className="credential-icon"><Award aria-hidden="true" /></div><div className="credential-body"><h3>{cert.title}</h3><p className="credential-issuer">{cert.issuer}</p><p className="credential-year">{cert.year}</p></div>{cert.verifyUrl ? <a className="credential-verify text-link" href={cert.verifyUrl} target="_blank" rel="noreferrer">Verify <ExternalLink aria-hidden="true" /></a> : null}</article>)}</div></section>
 

@@ -143,12 +143,24 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
           {project.desktopScreenshots && project.desktopScreenshots.length > 0 ? (
             <div className="case-section">
-              <h2>Screenshots</h2>
+              <h2>Screenshots &amp; Renders</h2>
               <div className="screenshot-gallery">
                 {project.desktopScreenshots.map((s, i) => (
                   <figure key={i} className="screenshot-frame">
-                    <Image src={s.src} alt={s.alt} width={s.width} height={s.height} sizes="(max-width: 860px) 100vw, 820px" />
-                    {s.placeholder ? <figcaption className="screenshot-note">Screenshot pending replacement</figcaption> : null}
+                    <Image
+                      src={s.src}
+                      alt={s.alt}
+                      width={1200}
+                      height={750}
+                      sizes="(max-width: 860px) 100vw, 820px"
+                      style={{ width: '100%', height: 'auto', display: 'block' }}
+                      priority={i === 0}
+                    />
+                    {s.placeholder ? (
+                      <figcaption className="screenshot-note">Screenshot pending replacement</figcaption>
+                    ) : (
+                      <figcaption className="screenshot-caption">{s.alt}</figcaption>
+                    )}
                   </figure>
                 ))}
               </div>
