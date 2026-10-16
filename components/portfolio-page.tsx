@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import {
   ArrowDownRight,
@@ -56,10 +56,10 @@ import {
 
 const navItems = [
   ['About', 'about'],
+  ['Journey', 'journey'],
   ['Expertise', 'expertise'],
   ['Skills', 'skills'],
   ['Work', 'work'],
-  ['Journey', 'journey'],
   ['Education', 'education'],
   ['Credentials', 'credentials'],
   ['Contact', 'contact'],
@@ -75,10 +75,16 @@ const serviceIconMap: Record<string, React.ComponentType<{ className?: string; '
 
 function Mark() {
   return (
-    <span className="mark-wrap" aria-hidden="true">
-      <img src="/branding/christopher-rateng-logo-icon.png" alt="" className="mark-logo" />
-      <span className="mark">CR<span>.</span></span>
-    </span>
+    <div className="brand-logo-frame">
+      <Image
+        src="/branding/christopher-rateng-logo-icon.png"
+        alt="Christopher Rateng Logo"
+        width={35}
+        height={35}
+        className="brand-logo-img"
+        priority
+      />
+    </div>
   )
 }
 
@@ -103,6 +109,46 @@ export default function PortfolioPage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeCategory, setActiveCategory] = useState<ProjectCategory | 'All Work'>('All Work')
   const [expandedMilestone, setExpandedMilestone] = useState<number | null>(null)
+  const [activeSection, setActiveSection] = useState<string>('about')
+  const [isScrolled, setIsScrolled] = useState<boolean>(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 30)
+
+      const sectionIds = navItems.map(([, id]) => id)
+      const scrollPosition = window.scrollY + 220
+
+      for (let i = sectionIds.length - 1; i >= 0; i--) {
+        const id = sectionIds[i]
+        const el = document.getElementById(id)
+        if (el && el.offsetTop <= scrollPosition) {
+          setActiveSection(id)
+          return
+        }
+      }
+      if (window.scrollY < 200) {
+        setActiveSection('')
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault()
+    setMenuOpen(false)
+    const element = document.getElementById(id)
+    if (element) {
+      const yOffset = -90
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset
+      window.scrollTo({ top: y, behavior: 'smooth' })
+      setActiveSection(id)
+      history.replaceState(null, '', `#${id}`)
+    }
+  }
 
   const filteredProjects: Project[] =
     activeCategory === 'All Work'
@@ -111,13 +157,54 @@ export default function PortfolioPage() {
 
   return (
     <div className="site-shell">
-      <header className="site-nav" aria-label="Primary navigation">
-        <a className="brand" href="#top" aria-label="Christopher Rateng home"><Mark /><span>Christopher Rateng</span></a>
+      <header className={`site-nav ${isScrolled ? 'scrolled' : ''}`} aria-label="Primary navigation">
+        <a
+          className="brand"
+          href="#top"
+          onClick={(e) => {
+            e.preventDefault()
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+            setActiveSection('')
+            history.replaceState(null, '', '#')
+          }}
+          aria-label="Christopher Rateng home"
+        >
+          <Mark />
+          <div className="brand-text">
+            <span className="brand-name">Christopher Rateng</span>
+            <span className="brand-tag">ICT &bull; SECURITY</span>
+          </div>
+        </a>
+
         <nav className={menuOpen ? 'nav-links open' : 'nav-links'}>
-          {navItems.map(([label, id]) => <a key={id} href={`#${id}`} onClick={() => setMenuOpen(false)}>{label}</a>)}
+          {navItems.map(([label, id]) => {
+            const isActive = activeSection === id
+            return (
+              <a
+                key={id}
+                href={`#${id}`}
+                className={`nav-link ${isActive ? 'active' : ''}`}
+                onClick={(e) => scrollToSection(e, id)}
+                aria-current={isActive ? 'true' : undefined}
+              >
+                <span className="nav-link-text">{label}</span>
+                {isActive && <span className="nav-active-indicator" />}
+              </a>
+            )
+          })}
         </nav>
-        <a className="nav-cta" href="#contact">Let&apos;s talk <ArrowUpRight aria-hidden="true" /></a>
-        <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen}>{menuOpen ? <X /> : <Menu />}</button>
+
+        <a className="nav-cta" href="#contact" onClick={(e) => scrollToSection(e, 'contact')}>
+          Let&apos;s talk <ArrowUpRight aria-hidden="true" />
+        </a>
+        <button
+          className="menu-button"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
+        >
+          {menuOpen ? <X /> : <Menu />}
+        </button>
       </header>
 
       <main id="top">
@@ -169,11 +256,11 @@ export default function PortfolioPage() {
 
         <section id="work" className="work section-pad"><div className="section-label"><span>05</span><span>Selected work</span></div><div className="work-heading"><h2>Proof is in<br /><em>what you build.</em></h2><p>A collection of software, digital experiences, infrastructure projects, and technical experiments.</p></div><div className="project-filters" role="tablist" aria-label="Filter projects by category">{projectCategories.map((cat) => <button key={cat.id} role="tab" aria-selected={activeCategory === cat.id} className={activeCategory === cat.id ? 'filter-active' : ''} onClick={() => setActiveCategory(cat.id)}>{cat.label}</button>)}</div><div className="projects">{filteredProjects.map(({ slug, title, category, description, technologies, featured, projectType, year, websiteUrl, desktopScreenshots }) => <article className={`project ${featured ? 'featured' : ''}`} key={slug}><a className="project-link" href={`/work/${slug}`} aria-label={`View case study for ${title}`}><div className="project-visual"><div className="project-lines" /><span className="project-type">{category}</span>{featured ? <div className="project-screenshot project-featured-render">{desktopScreenshots && desktopScreenshots.length > 0 ? (<><img src={desktopScreenshots[0].src} alt={desktopScreenshots[0].alt} /><div className="project-core project-core-badge"><span>Sheria</span><strong>Bot</strong><small>REGULATORY INTELLIGENCE</small></div></>) : (<div className="project-core"><span>Sheria</span><strong>Bot</strong><small>REGULATORY INTELLIGENCE</small></div>)}</div> : desktopScreenshots && desktopScreenshots.length > 0 ? <div className="project-screenshot"><img src={desktopScreenshots[0].src} alt={desktopScreenshots[0].alt} /></div> : <div className="project-placeholder"><span>{projectType}</span></div>}<span className="project-year">{year}</span></div><div className="project-info"><div><h3>{title}</h3><p>{description}</p></div><div className="project-footer"><span>{technologies.join(' · ')}</span><span className="case-study">View case study <ArrowUpRight aria-hidden="true" /></span></div></div></a>{websiteUrl ? <a className="project-visit" href={websiteUrl} target="_blank" rel="noreferrer" aria-label={`Visit ${title} website`}>Visit site <ExternalLink aria-hidden="true" /></a> : null}</article>)}</div></section>
 
-        <section id="education" className="education section-pad ruled-section"><div className="section-label"><span>06</span><span>Education &amp; research</span></div><div className="education-heading"><h2>Built on a<br /><em>strong technical</em><br />foundation.</h2><p>Formal training and active research in information systems, networking, and information security.</p></div><div className="education-grid">{education.map((ed) => <article className="education-item" key={ed.degree}><div className="education-header"><div className="education-degree"><GraduationCap aria-hidden="true" /><h3>{ed.degree}</h3></div><img src="/logos/usiu-logo.png" alt="USIU-Africa" className="usiu-badge" /></div><p className="education-field">{ed.field}</p><p className="education-school">{ed.institution}</p><p className="education-year">{ed.year}{ed.status === 'in-progress' ? ' (in progress)' : ''}</p></article>)}</div><div className="research-block"><span className="eyebrow"><span className="eyebrow-dot" /> Active research</span><h3>{research.title}</h3><p>{research.description}</p><div className="research-interests"><strong>Research interests:</strong><ul>{research.interests.map((i) => <li key={i}>{i}</li>)}</ul></div>{research.context && <p className="research-context">{research.context}</p>}</div></section>
+        <section id="education" className="education section-pad ruled-section"><div className="section-label"><span>06</span><span>Education &amp; research</span></div><div className="education-heading"><h2>Built on a<br /><em>strong technical</em><br />foundation.</h2><p>Formal academic training and active research in information systems, networking, and information security.</p></div><div className="education-grid">{education.map((ed) => <article className="education-item" key={ed.degree}><div className="education-top-bar"><div className="usiu-seal-wrap"><Image src="/logos/usiu-logo.png" alt="United States International University–Africa" width={56} height={56} className="usiu-seal-img" /></div><div className="institution-info"><span className="institution-title">{ed.institution}</span><span className="institution-subtitle">School of Science &amp; Technology · Nairobi, Kenya</span></div></div><div className="education-body"><div className="education-degree-row"><GraduationCap className="education-icon" aria-hidden="true" /><h3 className="education-degree-title">{ed.degree}</h3></div><div className="education-tags"><span className="education-field-chip">{ed.field}</span><span className={`education-status-chip ${ed.status === 'in-progress' ? 'status-active' : 'status-complete'}`}>{ed.status === 'in-progress' ? 'In Progress · Target Nov 2026' : `Class of ${ed.year}`}</span></div></div></article>)}</div><div className="research-block"><div className="research-header-row"><div className="research-title-group"><span className="eyebrow"><span className="eyebrow-dot" /> Active research</span><h3>{research.title}</h3></div><div className="research-institution-seal"><Image src="/logos/usiu-logo.png" alt="USIU-Africa Research" width={38} height={38} className="research-seal-img" /><div className="research-seal-text"><strong>USIU-AFRICA</strong><small>Graduate Research</small></div></div></div><p>{research.description}</p><div className="research-interests"><strong>Research interests:</strong><ul>{research.interests.map((i) => <li key={i}>{i}</li>)}</ul></div>{research.context && <p className="research-context">{research.context}</p>}</div></section>
 
         <section id="credentials" className="credentials section-pad ruled-section"><div className="section-label"><span>07</span><span>Certifications</span></div><div className="credentials-heading"><h2>Verified<br /><em>professional</em><br />credentials.</h2><p>Industry certifications across cybersecurity, networking, and information technology fundamentals.</p></div><div className="credentials-grid">{certifications.map((cert) => <article className="credential" key={cert.title}><div className="credential-icon"><Award aria-hidden="true" /></div><div className="credential-body"><h3>{cert.title}</h3><p className="credential-issuer">{cert.issuer}</p><p className="credential-year">{cert.year}</p></div>{cert.verifyUrl ? <a className="credential-verify text-link" href={cert.verifyUrl} target="_blank" rel="noreferrer">Verify <ExternalLink aria-hidden="true" /></a> : null}</article>)}</div></section>
 
-        <section id="contact" className="contact section-pad dark-section"><div className="contact-orb" /><div className="section-label light-label"><span>08</span><span>Start a conversation</span></div><div className="contact-content"><p className="eyebrow">Available for selected projects, consulting &amp; collaborations</p><h2>Have a difficult<br /><em>technical problem?</em></h2><p className="contact-copy">Let&apos;s make it clearer, safer, and more useful. Tell me what you&apos;re building, what&apos;s not working, or what needs to work better.</p><div className="contact-pathways"><div className="pathway pathway-client"><h3>For business clients</h3><p>Request an ICT consultation, or book an infrastructure &amp; security assessment.</p><a className="button button-orange" href={`mailto:${siteConfig.contact.email}?subject=ICT%20Consultation%20Request`}>Request an ICT consultation <ArrowUpRight aria-hidden="true" /></a><a className="text-link light-link" href={`mailto:${siteConfig.contact.email}?subject=Infrastructure%20%26%20Security%20Assessment%20Request`}>Book an assessment <ArrowUpRight aria-hidden="true" /></a></div><div className="pathway pathway-recruiter"><h3>For engineering &amp; employment opportunities</h3><p>View my public work or request a technical résumé.</p><div className="recruiter-links"><a className="recruiter-link" href={siteConfig.contact.github} target="_blank" rel="noreferrer"><GithubIcon className="w-[15px] h-[15px]" /> View GitHub</a><a className="recruiter-link" href={siteConfig.contact.linkedin} target="_blank" rel="noreferrer"><LinkedinIcon className="w-[15px] h-[15px]" /> Connect on LinkedIn</a><a className="recruiter-link" href={`mailto:${siteConfig.contact.email}?subject=R%C3%A9sum%C3%A9%20Request`}><FileText aria-hidden="true" /> Request résumé</a></div></div></div><div className="contact-meta"><span><MapPin aria-hidden="true" /> {siteConfig.contact.location}</span><span><Globe aria-hidden="true" /> {siteConfig.contact.serviceRegions}</span><span><Mail aria-hidden="true" /> {siteConfig.contact.email}</span></div></div><footer><a className="brand footer-brand" href="#top"><Mark /><span>{siteConfig.name}</span></a><span>{siteConfig.contact.location} / Remote worldwide</span><span>© 2026 {siteConfig.name}</span></footer></section>
+        <section id="contact" className="contact section-pad dark-section"><div className="contact-orb" /><div className="section-label light-label"><span>08</span><span>Start a conversation</span></div><div className="contact-content"><p className="eyebrow">Available for selected projects, consulting &amp; collaborations</p><h2>Have a difficult<br /><em>technical problem?</em></h2><p className="contact-copy">Let&apos;s make it clearer, safer, and more useful. Tell me what you&apos;re building, what&apos;s not working, or what needs to work better.</p><div className="contact-pathways"><div className="pathway pathway-client"><h3>For business clients</h3><p>Request an ICT consultation, or book an infrastructure &amp; security assessment.</p><a className="button button-orange" href={`mailto:${siteConfig.contact.email}?subject=ICT%20Consultation%20Request`}>Request an ICT consultation <ArrowUpRight aria-hidden="true" /></a><a className="text-link light-link" href={`mailto:${siteConfig.contact.email}?subject=Infrastructure%20%26%20Security%20Assessment%20Request`}>Book an assessment <ArrowUpRight aria-hidden="true" /></a></div><div className="pathway pathway-recruiter"><h3>For engineering &amp; employment opportunities</h3><p>View my public work or request a technical résumé.</p><div className="recruiter-links"><a className="recruiter-link" href={siteConfig.contact.github} target="_blank" rel="noreferrer"><GithubIcon className="w-[15px] h-[15px]" /> View GitHub</a><a className="recruiter-link" href={siteConfig.contact.linkedin} target="_blank" rel="noreferrer"><LinkedinIcon className="w-[15px] h-[15px]" /> Connect on LinkedIn</a><a className="recruiter-link" href={`mailto:${siteConfig.contact.email}?subject=R%C3%A9sum%C3%A9%20Request`}><FileText aria-hidden="true" /> Request résumé</a></div></div></div><div className="contact-meta"><span><MapPin aria-hidden="true" /> {siteConfig.contact.location}</span><span><Globe aria-hidden="true" /> {siteConfig.contact.serviceRegions}</span><span><Mail aria-hidden="true" /> {siteConfig.contact.email}</span></div></div><footer><a className="brand footer-brand" href="#top" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}><Mark /><span className="footer-brand-name">{siteConfig.name}</span></a><span>{siteConfig.contact.location} / Remote worldwide</span><span>© 2026 {siteConfig.name}</span></footer></section>
       </main>
     </div>
   )
