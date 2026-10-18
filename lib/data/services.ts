@@ -241,7 +241,7 @@ export const services: Service[] = [
     clientBenefit:
       'Professional, responsive websites and applications that help organisations build credibility and communicate clearly.',
     cta: 'Discuss a Website Project',
-    icon: 'sparkles',
+    icon: 'software',
     tone: 'light',
   },
   {
@@ -290,7 +290,7 @@ export const services: Service[] = [
     clientBenefit:
       'Reduce repetitive work by connecting the tools your business already uses and introducing practical automation where it makes sense.',
     cta: 'Discuss an Automation Project',
-    icon: 'sparkles',
+    icon: 'automation',
     tone: 'light',
   },
   {

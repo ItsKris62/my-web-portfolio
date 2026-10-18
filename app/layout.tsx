@@ -1,10 +1,20 @@
 import { Analytics } from '@vercel/analytics/next'
+import { Inter } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { siteConfig } from '@/lib/data'
 
+// ── Fonts ─────────────────────────────────────────────────────────────────
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+})
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || siteConfig.siteUrl || 'https://crateng.co.ke'
 
+// ── Metadata ───────────────────────────────────────────────────────────────
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -117,16 +127,14 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'light dark',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f7f7f4' },
-    { media: '(prefers-color-scheme: dark)', color: '#181b20' },
-  ],
+  colorScheme: 'light',
+  themeColor: '#f7f7f4',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
 }
 
+// ── Structured Data ────────────────────────────────────────────────────────
 const structuredDataGraph = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -156,10 +164,7 @@ const structuredDataGraph = {
         name: 'SheriaBot',
         url: 'https://app.sheriabot.com',
       },
-      sameAs: [
-        siteConfig.contact.linkedin,
-        siteConfig.contact.github,
-      ],
+      sameAs: [siteConfig.contact.linkedin, siteConfig.contact.github],
       knowsAbout: [
         'IT Infrastructure & Enterprise Networking',
         'Cybersecurity & Threat Mitigation',
@@ -219,23 +224,25 @@ const structuredDataGraph = {
   ],
 }
 
+// ── Root Layout ────────────────────────────────────────────────────────────
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className={inter.variable}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
-      <body className="antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredDataGraph) }}
         />
-        {children}
+      </head>
+      <body>
+        <a href="#main-content" className="skip-to-content">
+          Skip to main content
+        </a>
+        <div className="site-shell">{children}</div>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
