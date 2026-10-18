@@ -1,15 +1,24 @@
 import { Analytics } from '@vercel/analytics/next'
-import { Inter } from 'next/font/google'
+import localFont from 'next/font/local'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { siteConfig } from '@/lib/data'
 
 // ── Fonts ─────────────────────────────────────────────────────────────────
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
+const caviarDreams = localFont({
+  src: '../public/fonts/CaviarDreams.ttf',
+  variable: '--font-caviar-dreams',
   display: 'swap',
-  weight: ['400', '500', '600', '700'],
+  weight: '400',
+  style: 'normal',
+})
+
+const angkest = localFont({
+  src: '../public/fonts/Angkest.ttf',
+  variable: '--font-angkest',
+  display: 'swap',
+  weight: '400',
+  style: 'normal',
 })
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || siteConfig.siteUrl || 'https://crateng.co.ke'
@@ -231,7 +240,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${caviarDreams.variable} ${angkest.variable}`}>
       <head>
         <script
           type="application/ld+json"

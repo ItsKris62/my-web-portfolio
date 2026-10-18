@@ -38,7 +38,8 @@
   --graphite-soft: #1f2329;
 
   /* Typography */
-  --font-sans: var(--font-inter), 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: var(--font-caviar-dreams), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: var(--font-angkest), var(--font-sans);
   --font-mono: ui-monospace, 'SF Mono', 'Fira Code', Menlo, monospace;
   --font-serif: Georgia, 'Times New Roman', serif;
   --font-brand: 'Autography', cursive, sans-serif;
@@ -169,6 +170,18 @@ section[id] {
 
 /* ── Typography Scale ────────────────────────────────────── */
 /* Display */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.text-display,
+.text-heading,
+.text-subhead {
+  font-family: var(--font-heading);
+}
+
 .text-display {
   font-size: clamp(4rem, 8vw, 9rem);
   font-weight: 700;
@@ -5405,4 +5418,3 @@ em,
     max-width: 140px;
   }
 }
-
