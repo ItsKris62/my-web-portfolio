@@ -242,13 +242,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${caviarDreams.variable} ${angkest.variable}`}>
-      <head>
+      <body>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredDataGraph) }}
         />
-      </head>
-      <body>
         <a href="#main-content" className="skip-to-content">
           Skip to main content
         </a>
