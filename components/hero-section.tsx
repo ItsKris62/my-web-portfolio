@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
+import { AccessBadge } from '@/components/access-badge'
+import { LanyardSpine } from '@/components/lanyard-spine'
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react'
 import {
   InfrastructureIcon,
@@ -207,13 +209,15 @@ export function HeroSection() {
         </div>
       </div>
 
+      <LanyardSpine />
+
       {/* Right-Hand Studio Chassis with Micro-Parallax */}
       <div
         className="hero-visual hero-visual-animate"
         style={{ transform: portraitCardTransform, zIndex: 12 }}
       >
-        {/* Studio Portrait Card — Fixed 1:1 Intrinsic Geometry (Zero Distortion) */}
-        <div className="portrait-studio-card">
+        <AccessBadge />
+        <div className="portrait-studio-card hidden">
           <div className="portrait-aspect-frame">
             <Image
               src="/portraits/Christopher_rateng-Passport-Photo.jpg"
