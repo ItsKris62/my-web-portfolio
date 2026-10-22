@@ -10,7 +10,7 @@ import { ConversionFooter } from '@/components/conversion-footer'
 
 export default function PortfolioPage() {
   return (
-    <>
+    <div className="portfolio-experience relative overflow-x-clip">
       <SiteHeader />
       <main id="main-content">
         <HeroSection />
@@ -22,6 +22,6 @@ export default function PortfolioPage() {
         <EducationCredentials />
       </main>
       <ConversionFooter />
-    </>
+    </div>
   )
 }

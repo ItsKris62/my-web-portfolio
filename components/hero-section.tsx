@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import Image from 'next/image'
+import { useEffect, useRef } from 'react'
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react'
 import {
   InfrastructureIcon,
@@ -10,20 +9,28 @@ import {
   AutomationIcon,
 } from '@/components/icons'
 import { siteConfig } from '@/lib/data'
+import { AccessBadge } from '@/components/hero/access-badge'
 
 export function HeroSection() {
-  const [scrollY, setScrollY] = useState(0)
   const heroRef = useRef<HTMLElement>(null)
+  const backgroundRef = useRef<HTMLDivElement>(null)
+  const signalBusRef = useRef<HTMLDivElement>(null)
+  const badgeLayerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     let ticking = false
+    let frameId: number | null = null
+
     const handleScroll = () => {
       if (!ticking) {
-        window.requestAnimationFrame(() => {
+        frameId = window.requestAnimationFrame(() => {
           if (heroRef.current) {
             const rect = heroRef.current.getBoundingClientRect()
             if (rect.bottom > 0) {
-              setScrollY(window.scrollY)
+              const scrollY = window.scrollY
+              if (backgroundRef.current) backgroundRef.current.style.transform = `translateY(${Math.round(scrollY * 0.12)}px)`
+              if (signalBusRef.current) signalBusRef.current.style.transform = `translateY(${Math.round(scrollY * 0.25)}px)`
+              if (badgeLayerRef.current) badgeLayerRef.current.style.transform = `translateY(${Math.round(scrollY * 0.05)}px)`
             }
           }
           ticking = false
@@ -34,13 +41,11 @@ export function HeroSection() {
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (frameId !== null) window.cancelAnimationFrame(frameId)
+    }
   }, [])
-
-  // Parallax layer calculations (hardware-accelerated transforms)
-  const bgGridTransform = `translateY(${Math.round(scrollY * 0.12)}px)`
-  const busSignalsTransform = `translateY(${Math.round(scrollY * 0.25)}px)`
-  const portraitCardTransform = `translateY(${Math.round(scrollY * 0.05)}px)`
 
   return (
     <section
@@ -50,8 +55,8 @@ export function HeroSection() {
     >
       {/* ── PARALLAX LAYER 1: Background Topological Coordinate Grid ── */}
       <div
+        ref={backgroundRef}
         className="hero-parallax-bg"
-        style={{ transform: bgGridTransform }}
         aria-hidden="true"
       >
         <svg
@@ -98,8 +103,8 @@ export function HeroSection() {
 
       {/* ── PARALLAX LAYER 2: Living Network Signal Bus Lines ── */}
       <div
+        ref={signalBusRef}
         className="hero-signal-bus-layer"
-        style={{ transform: busSignalsTransform }}
         aria-hidden="true"
       >
         <svg
@@ -188,59 +193,34 @@ export function HeroSection() {
           </a>
         </div>
 
-        <div className="hero-meta hero-meta-animate" aria-label="Core focus areas and physical base">
-          <span className="meta-pill">
-            <CybersecurityIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--orange)]" /> Cybersecurity
-          </span>
-          <span className="meta-pill">
-            <InfrastructureIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--teal)]" /> Infrastructure
-          </span>
-          <span className="meta-pill">
-            <SoftwareIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--ink)]" /> Software Development
-          </span>
-          <span className="meta-pill">
-            <AutomationIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--orange)]" /> AI Automation
-          </span>
-          <span className="hero-meta-location">
-            Nairobi, Kenya &bull; East Africa &bull; Worldwide Remote
-          </span>
-        </div>
       </div>
 
       {/* Right-Hand Studio Chassis with Micro-Parallax */}
       <div
+        ref={badgeLayerRef}
         className="hero-visual hero-visual-animate"
-        style={{ transform: portraitCardTransform, zIndex: 12 }}
+        style={{ zIndex: 12 }}
       >
-        {/* Studio Portrait Card — Fixed 1:1 Intrinsic Geometry (Zero Distortion) */}
-        <div className="portrait-studio-card">
-          <div className="portrait-aspect-frame">
-            <Image
-              src="/portraits/Christopher_rateng-Passport-Photo.jpg"
-              alt="Christopher Modicai Rateng — Systems Infrastructure & Cloud Security Specialist"
-              fill
-              sizes="(max-width: 768px) 290px, 360px"
-              className="portrait-studio-img"
-              priority
-            />
-            {/* Precision Blueprint Corner Markers */}
-            <span className="blueprint-corner top-left" aria-hidden="true" />
-            <span className="blueprint-corner top-right" aria-hidden="true" />
-            <span className="blueprint-corner bottom-left" aria-hidden="true" />
-            <span className="blueprint-corner bottom-right" aria-hidden="true" />
-          </div>
+        {/* Physical Access Identification Badge & Suspended Lanyard Assembly */}
+        <AccessBadge priority />
+      </div>
 
-          <div className="portrait-studio-spec">
-            <div className="spec-status-row">
-              <span className="live-status-dot" aria-hidden="true" />
-              <span className="spec-status-text">AVAILABLE FOR PROJECTS &bull; CONSULTING</span>
-            </div>
-            <div className="spec-identity-row">
-              <strong className="spec-name">Christopher M. Rateng</strong>
-              <span className="spec-coords">01&deg; 17&prime; S / 36&deg; 49&prime; E &bull; NAIROBI, KE</span>
-            </div>
-          </div>
-        </div>
+      <div className="hero-meta hero-meta-animate" aria-label="Core focus areas and physical base">
+        <span className="meta-pill">
+          <CybersecurityIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--orange)]" /> Cybersecurity
+        </span>
+        <span className="meta-pill">
+          <InfrastructureIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--teal)]" /> Infrastructure
+        </span>
+        <span className="meta-pill">
+          <SoftwareIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--ink)]" /> Software Development
+        </span>
+        <span className="meta-pill">
+          <AutomationIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--orange)]" /> AI Automation
+        </span>
+        <span className="hero-meta-location">
+          Nairobi, Kenya &bull; East Africa &bull; Worldwide Remote
+        </span>
       </div>
     </section>
   )
