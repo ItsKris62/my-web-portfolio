@@ -722,32 +722,32 @@ em,
 
 .hero-eyebrow-animate {
   animation: heroFadeUp 420ms var(--ease-out) both;
-  animation-delay: 40ms;
+  animation-delay: 1.3s;
 }
 
 .hero-title-animate {
   animation: heroFadeUp 480ms var(--ease-out) both;
-  animation-delay: 110ms;
+  animation-delay: 1.45s;
 }
 
 .hero-lede-animate {
   animation: heroFadeUp 480ms var(--ease-out) both;
-  animation-delay: 200ms;
+  animation-delay: 1.65s;
 }
 
 .hero-actions-animate {
   animation: heroFadeUp 460ms var(--ease-out) both;
-  animation-delay: 290ms;
+  animation-delay: 1.85s;
 }
 
 .hero-meta-animate {
   animation: heroFadeUp 460ms var(--ease-out) both;
-  animation-delay: 380ms;
+  animation-delay: 2.05s;
 }
 
 .hero-visual-animate {
   animation: heroFadeUp 560ms var(--ease-out) both;
-  animation-delay: 180ms;
+  animation-delay: 0ms;
 }
 
 /* Hero Interactive Controls & Micro-motion */
@@ -770,8 +770,30 @@ em,
   flex-direction: column;
   align-items: center;
   perspective: 1400px;
+  overflow: visible;
   touch-action: pan-y;
   user-select: none;
+}
+
+/* The whole suspended assembly drops together; the inner group only swings. */
+.access-badge-scene.entrance {
+  animation: badge-assembly-drop 2.2s cubic-bezier(0.22, 0.68, 0.35, 1) both;
+  will-change: transform, opacity;
+}
+
+@keyframes badge-assembly-drop {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -80px, 0);
+  }
+  12% {
+    opacity: 1;
+    transform: translate3d(0, -20px, 0);
+  }
+  30% { transform: translate3d(0, 6px, 0); }
+  48% { transform: translate3d(0, -2px, 0); }
+  64% { transform: translate3d(0, 1px, 0); }
+  78%, 90%, 100% { transform: translate3d(0, 0, 0); }
 }
 
 .badge-lanyard-loop {
@@ -787,6 +809,7 @@ em,
   transform-origin: 50% 0;
   transform: skewX(var(--strap-skew, 0deg));
   will-change: transform;
+  filter: saturate(0.92) contrast(1.05);
 }
 
 .badge-lanyard-loop:active { cursor: grabbing; }
@@ -812,33 +835,40 @@ em,
   width: 100%;
   transform-origin: 50% 3px;
   transform-style: preserve-3d;
+  overflow: visible;
   transform: translate3d(var(--strap-x, 0px), 0, 0) perspective(1250px) rotateX(var(--badge-rx)) rotateY(var(--badge-ry)) rotateZ(var(--badge-rz));
   will-change: transform;
 }
 
-/* Entrance animation for badge */
+/* Entrance animation for badge — continuous pendulum drop */
 .badge-swing.entrance {
-  animation: badge-entrance 2s cubic-bezier(0.25, 1, 0.5, 1) both;
+  animation: badge-entrance 2.2s cubic-bezier(0.22, 0.68, 0.35, 1) both;
 }
 
 @keyframes badge-entrance {
   0% {
-    transform: translateY(-40px) rotateZ(45deg);
+    transform: perspective(1250px) rotateX(0deg) rotateY(0deg) rotateZ(35deg);
+  }
+  12% {
+    transform: perspective(1250px) rotateX(2deg) rotateY(-1deg) rotateZ(25deg);
   }
   30% {
-    transform: translateY(10px) rotateZ(-30deg);
+    transform: perspective(1250px) rotateX(3.2deg) rotateY(-5deg) rotateZ(-18deg);
   }
-  55% {
-    transform: translateY(-5px) rotateZ(15deg);
+  48% {
+    transform: perspective(1250px) rotateX(1.8deg) rotateY(-2.4deg) rotateZ(10deg);
   }
-  75% {
-    transform: translateY(2px) rotateZ(-8deg);
+  64% {
+    transform: perspective(1250px) rotateX(1.6deg) rotateY(-3.6deg) rotateZ(-6deg);
+  }
+  78% {
+    transform: perspective(1250px) rotateX(1.5deg) rotateY(-3.1deg) rotateZ(3deg);
   }
   90% {
-    transform: translateY(-1px) rotateZ(4deg);
+    transform: perspective(1250px) rotateX(1.4deg) rotateY(-3.2deg) rotateZ(-1.5deg);
   }
   100% {
-    transform: translateY(0) rotateZ(0deg);
+    transform: translate3d(var(--strap-x, 0px), 0, 0) perspective(1250px) rotateX(var(--badge-rx)) rotateY(var(--badge-ry)) rotateZ(var(--badge-rz));
   }
 }
 
@@ -852,7 +882,7 @@ em,
 }
 
 .badge-swing.is-settling {
-  animation: badge-settle 1.4s cubic-bezier(0.22, 0.72, 0.24, 1) both;
+  animation: badge-settle 2s cubic-bezier(0.22, 0.72, 0.24, 1) both;
 }
 
 .badge-hardware {
@@ -863,6 +893,7 @@ em,
   height: auto;
   margin: 0 auto -30px;
   overflow: visible;
+  filter: drop-shadow(0 2px 1px rgba(8, 10, 13, 0.2));
 }
 
 .badge-holder-shell {
@@ -875,8 +906,9 @@ em,
     linear-gradient(115deg, rgba(255, 255, 255, 0.82), rgba(222, 231, 236, 0.3) 42%, rgba(249, 252, 253, 0.66) 72%, rgba(202, 214, 221, 0.34)),
     rgba(231, 238, 242, 0.58);
   box-shadow:
-    25px 38px 56px -28px rgba(17, 21, 26, 0.42),
-    9px 17px 25px -15px rgba(17, 21, 26, 0.28),
+    25px 38px 56px -28px rgba(17, 21, 26, 0.44),
+    9px 17px 25px -15px rgba(17, 21, 26, 0.3),
+    0 -5px 12px -9px rgba(10, 13, 17, 0.34),
     0 2px 4px rgba(25, 30, 35, 0.1),
     inset 2px 2px 0 rgba(255, 255, 255, 0.9),
     inset -2px -2px 0 rgba(88, 105, 117, 0.22),
@@ -934,7 +966,10 @@ em,
   border-bottom-color: rgba(255, 255, 255, 0.76);
   border-radius: 20px 20px 10px 10px;
   background: linear-gradient(115deg, rgba(255,255,255,.72), rgba(220,229,234,.32) 58%, rgba(255,255,255,.62));
-  box-shadow: inset 0 1px 1px rgba(255,255,255,.9), 0 4px 7px rgba(21,25,29,.08);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.9),
+    inset 0 -4px 7px rgba(56, 68, 77, 0.08),
+    0 5px 9px rgba(21,25,29,.11);
 }
 
 .badge-holder-slot {
@@ -942,23 +977,31 @@ em,
   z-index: 6;
   top: 11px;
   left: 50%;
-  width: 52px;
+  width: 48px;
   height: 14px;
   transform: translateX(-50%);
   display: grid;
   place-items: center;
-  border-radius: 8px;
-  background: rgba(111, 126, 137, 0.24);
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  box-shadow: inset 0 2px 4px rgba(42, 49, 55, 0.22), 0 1px 0 rgba(255,255,255,.72);
+  border-radius: 7px;
+  background: rgba(145, 162, 175, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.82),
+    inset 0 -3px 4px rgba(33, 42, 49, 0.12),
+    0 2px 5px rgba(15, 20, 26, 0.1);
 }
 
 .badge-holder-slot span {
-  width: 37px;
-  height: 7px;
-  border-radius: 5px;
-  background: #111419;
-  box-shadow: inset 0 2px 3px #050608, 0 1px 0 rgba(255,255,255,.45);
+  width: 36px;
+  height: 8px;
+  border-radius: 4px;
+  background: #0d1014;
+  border: 1px solid rgba(15, 18, 22, 0.85);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.82),
+    inset 0 -1px 1px rgba(130, 143, 153, 0.22),
+    0 1px 0 rgba(255, 255, 255, 0.56),
+    0 3px 5px rgba(11, 14, 18, 0.12);
 }
 
 .badge-card-insert {
@@ -3279,6 +3322,8 @@ em,
   .arrow-shift,
   .portrait-studio-img,
   .portrait-studio-card,
+  .access-badge-scene.entrance,
+  .badge-swing.entrance,
   .badge-swing.is-settling,
   .badge-portrait-photo,
   .signal-flow-pulse,
