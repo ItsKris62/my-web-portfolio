@@ -36,18 +36,30 @@ export function AccessBadge({ className = '', priority = true }: AccessBadgeProp
   const [isSettling, setIsSettling] = useState(true)
   const [isTouchActive, setIsTouchActive] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(false)
+  // Entrance flag: true while badge performs initial drop animation
+  const [showEntrance, setShowEntrance] = useState(true)
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)')
     const syncPreference = () => {
       setReducedMotion(media.matches)
-      if (media.matches) setIsSettling(false)
+      if (media.matches) {
+        setIsSettling(false)
+        setShowEntrance(false)
+      }
     }
 
     syncPreference()
     media.addEventListener('change', syncPreference)
     return () => media.removeEventListener('change', syncPreference)
   }, [])
+
+  // Remove entrance class after the drop animation finishes (≈600ms)
+  useEffect(() => {
+    if (reducedMotion) return
+    const timer = window.setTimeout(() => setShowEntrance(false), 600)
+    return () => window.clearTimeout(timer)
+  }, [reducedMotion])
 
   useEffect(() => {
     if (reducedMotion) return
@@ -264,7 +276,7 @@ export function AccessBadge({ className = '', priority = true }: AccessBadgeProp
 
       <div
         ref={swingRef}
-        className={`badge-swing${isSettling ? ' is-settling' : ''}${isTouchActive ? ' is-touch-active' : ''}`}
+        className={`badge-swing${isSettling ? ' is-settling' : ''}${isTouchActive ? ' is-touch-active' : ''}${showEntrance ? ' entrance' : ''}`}
         style={restingVariables}
       >
         <svg className="badge-hardware" viewBox="0 0 76 112" aria-hidden="true">

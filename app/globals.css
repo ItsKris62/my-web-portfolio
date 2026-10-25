@@ -816,6 +816,33 @@ em,
   will-change: transform;
 }
 
+/* Entrance animation for badge */
+.badge-swing.entrance {
+  animation: badge-entrance 2s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+
+@keyframes badge-entrance {
+  0% {
+    transform: translateY(-40px) rotateZ(45deg);
+  }
+  30% {
+    transform: translateY(10px) rotateZ(-30deg);
+  }
+  55% {
+    transform: translateY(-5px) rotateZ(15deg);
+  }
+  75% {
+    transform: translateY(2px) rotateZ(-8deg);
+  }
+  90% {
+    transform: translateY(-1px) rotateZ(4deg);
+  }
+  100% {
+    transform: translateY(0) rotateZ(0deg);
+  }
+}
+
+
 @keyframes badge-settle {
   0% { transform: perspective(1250px) translateY(-12px) rotateX(3.8deg) rotateY(-1deg) rotateZ(2.5deg); }
   30% { transform: perspective(1250px) translateY(1px) rotateX(0.7deg) rotateY(-4deg) rotateZ(-5.8deg); }
