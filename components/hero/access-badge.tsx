@@ -9,34 +9,89 @@ import {
   useRef,
   useState,
 } from 'react'
+import {
+  HARDWARE_GEOMETRY,
+  HARDWARE_TO_HOLDER_RATIO,
+  LANYARD_LAYOUT,
+  LANYARD_PATHS,
+  LANYARD_VIEW_BOX,
+  joinAnchor,
+} from './access-badge/lanyard-geometry'
+import {
+  type LanyardPhysicsFrame,
+  useLanyardPhysics,
+} from './access-badge/use-lanyard-physics'
 
 interface AccessBadgeProps {
   className?: string
   priority?: boolean
 }
 
-const RESTING_POSE = {
-  x: 1.4,
-  y: -3.2,
-  z: -4.2,
-  lightX: 31,
-  lightY: 20,
-  strapX: 0,
-  strapSkew: 0,
+interface LanyardMaterialProps {
+  className?: string
+  href: string
+  side: 'left' | 'right'
 }
+
+function LanyardMaterial({ className = '', href, side }: LanyardMaterialProps) {
+  const stitchInset = side === 'left'
+    ? ['translate(5 -1.5)', 'translate(-5 1.5)']
+    : ['translate(-5 -1.5)', 'translate(5 1.5)']
+
+  return (
+    <g className={`lanyard-material ${className}`}>
+      <use href={href} className="lanyard-depth" strokeWidth="33" />
+      <use href={href} className="lanyard-base-fabric" strokeWidth="27" />
+      <use href={href} className="lanyard-weave lanyard-weave-dark" strokeWidth="25" strokeDasharray="2 2" />
+      <use
+        href={href}
+        className="lanyard-weave lanyard-weave-light"
+        strokeWidth="25"
+        strokeDasharray="2 2"
+        strokeDashoffset="2"
+        transform={side === 'left' ? 'translate(0.65 -0.35)' : 'translate(-0.65 -0.35)'}
+      />
+      <use href={href} className="lanyard-cylinder-shade" strokeWidth="25" />
+      <use href={href} className="lanyard-dynamic-highlight" strokeWidth="9" />
+      <use
+        href={href}
+        className="lanyard-edge-stitch"
+        strokeWidth="1"
+        strokeDasharray="4 4"
+        transform={stitchInset[0]}
+      />
+      <use
+        href={href}
+        className="lanyard-edge-stitch"
+        strokeWidth="1"
+        strokeDasharray="4 4"
+        strokeDashoffset="2"
+        transform={stitchInset[1]}
+      />
+    </g>
+  )
+}
+
+interface PointerVelocitySample {
+  time: number
+  x: number
+  y: number
+  velocityX: number
+  velocityY: number
+}
+
+type PointerInteraction = 'badge' | 'lanyard'
 
 export function AccessBadge({ className = '', priority = true }: AccessBadgeProps) {
   const sceneRef = useRef<HTMLElement>(null)
   const swingRef = useRef<HTMLDivElement>(null)
-  const frameRef = useRef<number | null>(null)
-  const activeRef = useRef(false)
-  const lanyardGrabRef = useRef(false)
-  const currentRef = useRef({ ...RESTING_POSE })
-  const targetRef = useRef({ ...RESTING_POSE })
-  const [isSettling, setIsSettling] = useState(false)
+  const hardwareRef = useRef<HTMLDivElement>(null)
+  const holderRef = useRef<HTMLDivElement>(null)
+  const activePointerRef = useRef<number | null>(null)
+  const pointerInteractionRef = useRef<PointerInteraction | null>(null)
+  const pointerVelocityRef = useRef<PointerVelocitySample | null>(null)
   const [isTouchActive, setIsTouchActive] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(false)
-  // Entrance flag: true while badge performs initial drop+swing animation
   const [showEntrance, setShowEntrance] = useState(true)
 
   useEffect(() => {
@@ -44,7 +99,6 @@ export function AccessBadge({ className = '', priority = true }: AccessBadgeProp
     const syncPreference = () => {
       setReducedMotion(media.matches)
       if (media.matches) {
-        setIsSettling(false)
         setShowEntrance(false)
       }
     }
@@ -54,7 +108,6 @@ export function AccessBadge({ className = '', priority = true }: AccessBadgeProp
     return () => media.removeEventListener('change', syncPreference)
   }, [])
 
-  // Coordinate entrance lifecycle via animationend (single continuous 2.2s motion to resting pose)
   useEffect(() => {
     if (reducedMotion) return
     const el = swingRef.current
@@ -62,7 +115,6 @@ export function AccessBadge({ className = '', priority = true }: AccessBadgeProp
 
     const finishEntrance = () => {
       setShowEntrance(false)
-      setIsSettling(false)
     }
 
     const fallbackTimer = window.setTimeout(finishEntrance, 2300)
@@ -71,8 +123,6 @@ export function AccessBadge({ className = '', priority = true }: AccessBadgeProp
       if (e.animationName === 'badge-entrance') {
         window.clearTimeout(fallbackTimer)
         finishEntrance()
-      } else if (e.animationName === 'badge-settle') {
-        setIsSettling(false)
       }
     }
 
@@ -83,233 +133,247 @@ export function AccessBadge({ className = '', priority = true }: AccessBadgeProp
     }
   }, [reducedMotion])
 
-  const updatePose = useCallback(() => {
-    if (reducedMotion || !sceneRef.current || !swingRef.current) {
-      activeRef.current = false
-      return
+  const applyPhysicsFrame = useCallback((frame: LanyardPhysicsFrame) => {
+    const scene = sceneRef.current
+    const hardware = hardwareRef.current
+    const holder = holderRef.current
+    if (!scene || !hardware || !holder) return
+
+    scene.style.setProperty('--strap-x', `${frame.strap.x.toFixed(2)}px`)
+    scene.style.setProperty('--strap-rz', `${frame.strap.rotateZ.toFixed(2)}deg`)
+    scene.style.setProperty('--light-position', `${frame.strap.lightPosition.toFixed(2)}px`)
+    scene.dataset.crossover = frame.strap.rotateZ < -0.02 ? 'left' : 'right'
+
+    hardware.style.setProperty('--hardware-x', `${frame.hardware.x.toFixed(2)}px`)
+    hardware.style.setProperty('--hardware-ry', `${frame.hardware.rotateY.toFixed(2)}deg`)
+    hardware.style.setProperty('--hardware-rz', `${frame.hardware.rotateZ.toFixed(2)}deg`)
+
+    holder.style.setProperty('--badge-x', `${frame.holder.x.toFixed(2)}px`)
+    holder.style.setProperty('--badge-rx', `${frame.holder.rotateX.toFixed(2)}deg`)
+    holder.style.setProperty('--badge-ry', `${frame.holder.rotateY.toFixed(2)}deg`)
+    holder.style.setProperty('--badge-rz', `${frame.holder.rotateZ.toFixed(2)}deg`)
+    holder.style.setProperty('--light-x', `${frame.holder.lightX.toFixed(1)}%`)
+    holder.style.setProperty('--light-y', `${frame.holder.lightY.toFixed(1)}%`)
+  }, [])
+
+  const { release, setPointerTarget } = useLanyardPhysics({
+    disabled: reducedMotion,
+    onFrame: applyPhysicsFrame,
+  })
+
+  const getPointerPosition = useCallback((event: ReactPointerEvent<HTMLElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    return {
+      x: Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width) * 2 - 1)),
+      y: Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height) * 2 - 1)),
     }
-
-    const current = currentRef.current
-    const target = targetRef.current
-    const ease = 0.105
-
-    current.x += (target.x - current.x) * ease
-    current.y += (target.y - current.y) * ease
-    current.z += (target.z - current.z) * ease
-    current.lightX += (target.lightX - current.lightX) * ease
-    current.lightY += (target.lightY - current.lightY) * ease
-    current.strapX += (target.strapX - current.strapX) * ease
-    current.strapSkew += (target.strapSkew - current.strapSkew) * ease
-
-    swingRef.current.style.setProperty('--badge-rx', `${current.x.toFixed(2)}deg`)
-    swingRef.current.style.setProperty('--badge-ry', `${current.y.toFixed(2)}deg`)
-    swingRef.current.style.setProperty('--badge-rz', `${current.z.toFixed(2)}deg`)
-    swingRef.current.style.setProperty('--light-x', `${current.lightX.toFixed(1)}%`)
-    swingRef.current.style.setProperty('--light-y', `${current.lightY.toFixed(1)}%`)
-    sceneRef.current.style.setProperty('--strap-x', `${current.strapX.toFixed(2)}px`)
-    sceneRef.current.style.setProperty('--strap-skew', `${current.strapSkew.toFixed(2)}deg`)
-
-    const remaining = Math.max(
-      Math.abs(target.x - current.x),
-      Math.abs(target.y - current.y),
-      Math.abs(target.z - current.z),
-      Math.abs(target.lightX - current.lightX) / 10,
-      Math.abs(target.lightY - current.lightY) / 10,
-      Math.abs(target.strapX - current.strapX),
-      Math.abs(target.strapSkew - current.strapSkew),
-    )
-
-    if (remaining > 0.012) {
-      frameRef.current = window.requestAnimationFrame(updatePose)
-    } else {
-      currentRef.current = { ...target }
-      activeRef.current = false
-      frameRef.current = null
-    }
-  }, [reducedMotion])
-
-  const startAnimation = useCallback(() => {
-    if (activeRef.current || reducedMotion) return
-    activeRef.current = true
-    frameRef.current = window.requestAnimationFrame(updatePose)
-  }, [reducedMotion, updatePose])
+  }, [])
 
   const handlePointerMove = useCallback((event: ReactPointerEvent<HTMLElement>) => {
     if (reducedMotion) return
 
-    const rect = event.currentTarget.getBoundingClientRect()
-    const normalizedX = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width) * 2 - 1))
-    const normalizedY = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height) * 2 - 1))
+    const normalized = getPointerPosition(event)
+    const isCaptured = activePointerRef.current === event.pointerId
+    const interaction = pointerInteractionRef.current
     const isLanyardTarget = event.target instanceof Element
       && event.target.closest('.badge-lanyard-loop') !== null
 
-    if (event.pointerType === 'touch' || event.pointerType === 'pen') {
-      if (!lanyardGrabRef.current) return
+    if ((event.pointerType === 'touch' || event.pointerType === 'pen') && !isCaptured) return
 
-      targetRef.current = {
-        x: RESTING_POSE.x - normalizedY * 1.8,
-        y: RESTING_POSE.y + normalizedX * 3.4,
-        z: RESTING_POSE.z + normalizedX * 1.8,
-        lightX: 31 + normalizedX * 13,
-        lightY: 20 + normalizedY * 9,
-        strapX: normalizedX * 10,
-        strapSkew: normalizedX * 3.2,
+    if (isCaptured) {
+      event.preventDefault()
+      const now = event.timeStamp
+      const previous = pointerVelocityRef.current
+      if (previous) {
+        const elapsed = Math.max(8, now - previous.time) / 1000
+        pointerVelocityRef.current = {
+          time: now,
+          x: normalized.x,
+          y: normalized.y,
+          velocityX: previous.velocityX * 0.55 + ((normalized.x - previous.x) / elapsed) * 0.45,
+          velocityY: previous.velocityY * 0.55 + ((normalized.y - previous.y) / elapsed) * 0.45,
+        }
       }
-      startAnimation()
+    }
+
+    if (isCaptured && interaction === 'badge') {
+      setPointerTarget(normalized.x * 0.42, normalized.y * 0.28, 0.16)
       return
     }
 
-    setIsSettling(false)
-    const strapInfluence = isLanyardTarget ? 1 : 0.32
-
-    targetRef.current = {
-      x: RESTING_POSE.x - normalizedY * 2.6,
-      y: RESTING_POSE.y + normalizedX * 4.2,
-      z: RESTING_POSE.z + normalizedX * 1.35,
-      lightX: 31 + normalizedX * 18,
-      lightY: 20 + normalizedY * 12,
-      strapX: normalizedX * 8 * strapInfluence,
-      strapSkew: normalizedX * 2.7 * strapInfluence,
-    }
-    startAnimation()
-  }, [reducedMotion, startAnimation])
+    setPointerTarget(normalized.x, normalized.y, isCaptured || isLanyardTarget ? 1 : 0.32)
+  }, [getPointerPosition, reducedMotion, setPointerTarget])
 
   const returnToRest = useCallback(() => {
-    lanyardGrabRef.current = false
+    if (activePointerRef.current !== null) return
     setIsTouchActive(false)
-    targetRef.current = { ...RESTING_POSE }
-    startAnimation()
-  }, [startAnimation])
+    release()
+  }, [release])
 
   const handlePointerDown = useCallback((event: ReactPointerEvent<HTMLElement>) => {
     if (reducedMotion) return
 
     const isLanyardTarget = event.target instanceof Element
       && event.target.closest('.badge-lanyard-loop') !== null
+    const isBadgeTarget = event.target instanceof Element
+      && event.target.closest('.badge-holder-motion, .badge-hardware-motion') !== null
+    const isInteractiveTarget = event.target instanceof Element
+      && event.target.closest('a, button') !== null
+    const isTouchPointer = event.pointerType === 'touch' || event.pointerType === 'pen'
 
-    if (event.pointerType === 'mouse') {
-      if (isLanyardTarget) setIsSettling(false)
-      return
+    if (!isLanyardTarget && (!isTouchPointer || !isBadgeTarget || isInteractiveTarget)) return
+
+    const normalized = getPointerPosition(event)
+    const interaction: PointerInteraction = isLanyardTarget ? 'lanyard' : 'badge'
+    event.preventDefault()
+    event.currentTarget.setPointerCapture(event.pointerId)
+    activePointerRef.current = event.pointerId
+    pointerInteractionRef.current = interaction
+    pointerVelocityRef.current = {
+      time: event.timeStamp,
+      x: normalized.x,
+      y: normalized.y,
+      velocityX: 0,
+      velocityY: 0,
+    }
+    setIsTouchActive(true)
+    setPointerTarget(
+      interaction === 'badge' ? normalized.x * 0.42 : normalized.x,
+      interaction === 'badge' ? normalized.y * 0.28 : normalized.y,
+      interaction === 'badge' ? 0.16 : 1,
+    )
+  }, [getPointerPosition, reducedMotion, setPointerTarget])
+
+  const finishPointerInteraction = useCallback((event: ReactPointerEvent<HTMLElement>, useMomentum: boolean) => {
+    if (activePointerRef.current !== event.pointerId) return
+
+    const velocity = pointerVelocityRef.current
+    const interaction = pointerInteractionRef.current
+    const momentumScale = velocity
+      ? Math.max(0, 1 - (event.timeStamp - velocity.time) / 120)
+      : 0
+    const releasedVelocityX = (velocity?.velocityX ?? 0) * momentumScale
+    const releasedVelocityY = (velocity?.velocityY ?? 0) * momentumScale
+    const touchSide = (velocity?.x ?? 0) < 0 ? -1 : 1
+    const badgeTapImpulse = interaction === 'badge' && Math.abs(releasedVelocityX) < 0.18
+      ? touchSide * 0.9
+      : 0
+    activePointerRef.current = null
+    pointerInteractionRef.current = null
+    pointerVelocityRef.current = null
+    setIsTouchActive(false)
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
     }
 
-    const rect = event.currentTarget.getBoundingClientRect()
-    const normalizedX = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width) * 2 - 1))
+    release(
+      useMomentum ? releasedVelocityX * (interaction === 'badge' ? 0.45 : 1) + badgeTapImpulse : 0,
+      useMomentum ? releasedVelocityY * (interaction === 'badge' ? 0.35 : 1) : 0,
+    )
+  }, [release])
 
-    lanyardGrabRef.current = isLanyardTarget
-    setIsSettling(false)
-    setIsTouchActive(true)
-    targetRef.current = isLanyardTarget
-      ? {
-          x: 1.9,
-          y: RESTING_POSE.y + normalizedX * 3.4,
-          z: RESTING_POSE.z + normalizedX * 1.8,
-          lightX: 31 + normalizedX * 13,
-          lightY: 24,
-          strapX: normalizedX * 10,
-          strapSkew: normalizedX * 3.2,
-        }
-      : {
-          x: 2.4,
-          y: -1.8,
-          z: -2.9,
-          lightX: 40,
-          lightY: 28,
-          strapX: 1.8,
-          strapSkew: 0.6,
-        }
-    startAnimation()
-  }, [reducedMotion, startAnimation])
+  const handlePointerUp = useCallback((event: ReactPointerEvent<HTMLElement>) => {
+    finishPointerInteraction(event, true)
+  }, [finishPointerInteraction])
 
-  useEffect(() => () => {
-    if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current)
-  }, [])
+  const handlePointerCancel = useCallback((event: ReactPointerEvent<HTMLElement>) => {
+    finishPointerInteraction(event, false)
+  }, [finishPointerInteraction])
+
+  const handleLostPointerCapture = useCallback((event: ReactPointerEvent<HTMLElement>) => {
+    if (activePointerRef.current === event.pointerId) {
+      activePointerRef.current = null
+      pointerInteractionRef.current = null
+      pointerVelocityRef.current = null
+      setIsTouchActive(false)
+      release()
+    }
+  }, [release])
 
   const restingVariables = {
-    '--badge-rx': `${RESTING_POSE.x}deg`,
-    '--badge-ry': `${RESTING_POSE.y}deg`,
-    '--badge-rz': `${RESTING_POSE.z}deg`,
-    '--light-x': `${RESTING_POSE.lightX}%`,
-    '--light-y': `${RESTING_POSE.lightY}%`,
-  } as CSSProperties
-
-  const restingStrapVariables = {
-    '--strap-x': `${RESTING_POSE.strapX}px`,
-    '--strap-skew': `${RESTING_POSE.strapSkew}deg`,
+    '--lanyard-width': `${LANYARD_LAYOUT.widthPercent}%`,
+    '--lanyard-join-x': `${LANYARD_LAYOUT.joinXPercent}%`,
+    '--lanyard-join-y': `${LANYARD_LAYOUT.joinYPercent}%`,
+    '--hardware-width': `${HARDWARE_GEOMETRY.renderedWidth}px`,
+    '--hardware-attachment-ratio': HARDWARE_TO_HOLDER_RATIO,
+    '--strap-x': '0px',
+    '--strap-rz': '0deg',
+    '--light-position': '0px',
   } as CSSProperties
 
   return (
     <figure
       ref={sceneRef}
-      className={`access-badge-scene${showEntrance ? ' entrance' : ''}${className ? ` ${className}` : ''}`}
-      style={restingStrapVariables}
+      className={`access-badge-scene${showEntrance ? ' entrance' : ''}${isTouchActive ? ' is-grabbed' : ''}${className ? ` ${className}` : ''}`}
+      style={restingVariables}
+      data-crossover="right"
       onPointerMove={handlePointerMove}
       onPointerLeave={returnToRest}
       onPointerDown={handlePointerDown}
-      onPointerUp={returnToRest}
-      onPointerCancel={returnToRest}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
+      onLostPointerCapture={handleLostPointerCapture}
       aria-label="Christopher Rateng studio profile badge"
     >
-      <svg className="badge-lanyard-loop" viewBox="0 0 252 164" aria-hidden="true">
-        <defs>
-          <pattern id="hero-lanyard-weave" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(34)">
-            <rect width="8" height="8" fill="#22252a" />
-            <path d="M 0 1.25 H 8 M 0 4.75 H 8" stroke="#555a61" strokeWidth="0.72" opacity="0.5" />
-            <path d="M 2.25 0 V 8 M 6.25 0 V 8" stroke="#0b0d10" strokeWidth="0.72" opacity="0.72" />
-            <path d="M 0 6.5 H 8" stroke="#30343a" strokeWidth="0.45" opacity="0.8" />
-          </pattern>
-          <linearGradient id="lanyard-edge-light" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#0b0c0f" />
-            <stop offset="0.18" stopColor="#44484e" />
-            <stop offset="0.52" stopColor="#25282d" />
-            <stop offset="0.82" stopColor="#53575d" />
-            <stop offset="1" stopColor="#0c0e10" />
-          </linearGradient>
-          <linearGradient id="lanyard-surface-light" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="rgba(255,255,255,0.02)" />
-            <stop offset="0.24" stopColor="rgba(255,255,255,0.15)" />
-            <stop offset="0.52" stopColor="rgba(255,255,255,0.015)" />
-            <stop offset="0.78" stopColor="rgba(255,255,255,0.1)" />
-            <stop offset="1" stopColor="rgba(0,0,0,0.2)" />
-          </linearGradient>
-          <filter id="lanyard-soft-shadow" x="-25%" y="-15%" width="150%" height="150%">
-            <feDropShadow dx="0" dy="2" stdDeviation="1.4" floodColor="#080a0d" floodOpacity="0.22" />
-            <feDropShadow dx="3" dy="6" stdDeviation="4.5" floodColor="#101217" floodOpacity="0.2" />
-          </filter>
-        </defs>
-        <g className="lanyard-desktop-run" filter="url(#lanyard-soft-shadow)" fill="none" strokeLinecap="butt">
-          <path d="M -72 -560 C -54 -350, -10 -94, 20 5 C 31 53, 57 96, 114 140" stroke="url(#lanyard-edge-light)" strokeWidth="33" />
-          <path d="M -72 -560 C -54 -350, -10 -94, 20 5 C 31 53, 57 96, 114 140" stroke="url(#hero-lanyard-weave)" strokeWidth="27" />
-          <path d="M -72 -560 C -54 -350, -10 -94, 20 5 C 31 53, 57 96, 114 140" stroke="url(#lanyard-surface-light)" strokeWidth="25" opacity="0.55" />
-          <path d="M 340 -560 C 314 -348, 275 -88, 232 5 C 222 54, 196 96, 138 140" stroke="url(#lanyard-edge-light)" strokeWidth="33" />
-          <path d="M 340 -560 C 314 -348, 275 -88, 232 5 C 222 54, 196 96, 138 140" stroke="url(#hero-lanyard-weave)" strokeWidth="27" />
-          <path d="M 340 -560 C 314 -348, 275 -88, 232 5 C 222 54, 196 96, 138 140" stroke="url(#lanyard-surface-light)" strokeWidth="25" opacity="0.48" />
-          <path d="M -63 -560 C -45 -350, -1 -94, 29 3 C 40 49, 64 89, 115 132" stroke="rgba(255,255,255,.15)" strokeWidth="1.1" />
-          <path d="M 331 -560 C 305 -348, 266 -88, 223 3 C 213 50, 189 90, 137 132" stroke="rgba(255,255,255,.13)" strokeWidth="1.1" />
-        </g>
-        <g className="lanyard-mobile-run" filter="url(#lanyard-soft-shadow)" fill="none" strokeLinecap="butt">
-          <path d="M -280 -560 C -282 -350, -280 -120, -278 -18 C -228 50, 4 108, 114 140" stroke="url(#lanyard-edge-light)" strokeWidth="33" />
-          <path d="M -280 -560 C -282 -350, -280 -120, -278 -18 C -228 50, 4 108, 114 140" stroke="url(#hero-lanyard-weave)" strokeWidth="27" />
-          <path d="M -280 -560 C -282 -350, -280 -120, -278 -18 C -228 50, 4 108, 114 140" stroke="url(#lanyard-surface-light)" strokeWidth="25" opacity="0.55" />
-          <path d="M 532 -560 C 534 -350, 532 -120, 530 -18 C 480 50, 248 108, 138 140" stroke="url(#lanyard-edge-light)" strokeWidth="33" />
-          <path d="M 532 -560 C 534 -350, 532 -120, 530 -18 C 480 50, 248 108, 138 140" stroke="url(#hero-lanyard-weave)" strokeWidth="27" />
-          <path d="M 532 -560 C 534 -350, 532 -120, 530 -18 C 480 50, 248 108, 138 140" stroke="url(#lanyard-surface-light)" strokeWidth="25" opacity="0.48" />
-          <path d="M -271 -560 C -273 -350, -271 -120, -269 -18 C -219 45, 9 101, 115 132" stroke="rgba(255,255,255,.15)" strokeWidth="1.1" />
-          <path d="M 523 -560 C 525 -350, 523 -120, 521 -18 C 471 45, 243 101, 137 132" stroke="rgba(255,255,255,.13)" strokeWidth="1.1" />
-        </g>
-        <text x="43" y="65" transform="rotate(50 43 65)" className="lanyard-woven-mark lanyard-desktop-run">CRATENG</text>
-        <text x="205" y="62" transform="rotate(-50 205 62)" className="lanyard-woven-mark lanyard-desktop-run">CRATENG</text>
-        <ellipse cx="126" cy="150" rx="22" ry="6.5" fill="#080a0d" opacity="0.2" />
-        <path d="M 106 132 Q 126 151 146 132 L 140 151 Q 126 160 112 151 Z" fill="url(#lanyard-edge-light)" stroke="#111318" strokeWidth="1.5" />
-        <path d="M 110 134 Q 126 148 142 134 L 137 148 Q 126 154 115 148 Z" fill="url(#hero-lanyard-weave)" />
-        <path d="M 113 142 Q 126 152 139 142" fill="none" stroke="rgba(255,255,255,.22)" strokeWidth="0.8" strokeDasharray="2 2" />
-      </svg>
+      <div className="badge-anchor-stage">
+        <svg
+          className="badge-lanyard-loop"
+          viewBox={`0 0 ${LANYARD_VIEW_BOX.width} ${LANYARD_VIEW_BOX.height}`}
+          aria-hidden="true"
+        >
+          <defs>
+            <path id="strap-spine" d={LANYARD_PATHS.desktop.left} />
+            <path id="strap-spine-right" d={LANYARD_PATHS.desktop.right} />
+            <path id="strap-spine-right-text" d={LANYARD_PATHS.desktop.rightText} />
+            <path id="strap-spine-mobile" d={LANYARD_PATHS.mobile.left} />
+            <path id="strap-spine-mobile-right" d={LANYARD_PATHS.mobile.right} />
+            <linearGradient id="lanyard-cylinder-light" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#000" stopOpacity="0.2" />
+              <stop offset="0.5" stopColor="#fff" stopOpacity="0.15" />
+              <stop offset="1" stopColor="#000" stopOpacity="0.2" />
+            </linearGradient>
+            <filter id="lanyard-soft-shadow" x="-25%" y="-15%" width="150%" height="150%">
+              <feDropShadow dx="0" dy="2" stdDeviation="1.4" floodColor="#080a0d" floodOpacity="0.22" />
+              <feDropShadow dx="3" dy="6" stdDeviation="4.5" floodColor="#101217" floodOpacity="0.2" />
+            </filter>
+            <clipPath id="lanyard-crossover-clip">
+              <circle cx={joinAnchor.x} cy={joinAnchor.y - 5} r="24" />
+            </clipPath>
+          </defs>
+
+          <g className="lanyard-desktop-run" filter="url(#lanyard-soft-shadow)" fill="none" strokeLinecap="butt">
+            <LanyardMaterial href="#strap-spine" side="left" />
+            <LanyardMaterial href="#strap-spine-right" side="right" />
+            <g clipPath="url(#lanyard-crossover-clip)">
+              <LanyardMaterial href="#strap-spine" side="left" className="lanyard-crossover-front is-left" />
+              <LanyardMaterial href="#strap-spine-right" side="right" className="lanyard-crossover-front is-right" />
+            </g>
+            <text className="lanyard-woven-mark">
+              <textPath href="#strap-spine" startOffset="79%">CRATENG</textPath>
+            </text>
+            <text className="lanyard-woven-mark">
+              <textPath href="#strap-spine-right-text" startOffset="12%">CRATENG</textPath>
+            </text>
+          </g>
+
+          <g className="lanyard-mobile-run" filter="url(#lanyard-soft-shadow)" fill="none" strokeLinecap="butt">
+            <LanyardMaterial href="#strap-spine-mobile" side="left" />
+            <LanyardMaterial href="#strap-spine-mobile-right" side="right" />
+            <g clipPath="url(#lanyard-crossover-clip)">
+              <LanyardMaterial href="#strap-spine-mobile" side="left" className="lanyard-crossover-front is-left" />
+              <LanyardMaterial href="#strap-spine-mobile-right" side="right" className="lanyard-crossover-front is-right" />
+            </g>
+          </g>
+        </svg>
+      </div>
 
       <div
         ref={swingRef}
-        className={`badge-swing${isSettling ? ' is-settling' : ''}${isTouchActive ? ' is-touch-active' : ''}${showEntrance ? ' entrance' : ''}`}
-        style={restingVariables}
+        className={`badge-swing${isTouchActive ? ' is-touch-active' : ''}${showEntrance ? ' entrance' : ''}`}
       >
-        <svg className="badge-hardware" viewBox="0 0 76 112" aria-hidden="true">
+        <div ref={hardwareRef} className="badge-hardware-motion">
+          <svg className="badge-hardware" viewBox="0 0 76 112" aria-hidden="true">
           <defs>
             <linearGradient id="badge-gunmetal" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0" stopColor="#121519" />
@@ -416,14 +480,16 @@ export function AccessBadge({ className = '', priority = true }: AccessBadgeProp
             {/* Contact shadow at bottom where ring passes through slot hole */}
             <ellipse cx="38" cy="95.5" rx="6.5" ry="2" fill="#06080b" opacity="0.5" />
           </g>
-        </svg>
+          </svg>
+        </div>
 
-        <div className="badge-holder-shell">
-          <div className="badge-holder-crown" aria-hidden="true" />
-          <div className="badge-holder-slot" aria-hidden="true"><span /></div>
+        <div ref={holderRef} className="badge-holder-motion">
+          <div className="badge-holder-shell">
+            <div className="badge-holder-crown" aria-hidden="true" />
+            <div className="badge-holder-slot" aria-hidden="true"><span /></div>
 
-          <article className="badge-card-insert">
-            <div className="badge-security-field" aria-hidden="true" />
+            <article className="badge-card-insert">
+              <div className="badge-security-field" aria-hidden="true" />
 
             <header className="badge-card-header">
               <div>
@@ -468,10 +534,11 @@ export function AccessBadge({ className = '', priority = true }: AccessBadgeProp
                 <span>crateng.co.ke</span>
               </a>
             </footer>
-          </article>
+            </article>
 
-          <div className="badge-holder-reflection" aria-hidden="true" />
-          <div className="badge-holder-edge" aria-hidden="true" />
+            <div className="badge-holder-reflection" aria-hidden="true" />
+            <div className="badge-holder-edge" aria-hidden="true" />
+          </div>
         </div>
       </div>
     </figure>
