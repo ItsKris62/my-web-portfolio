@@ -38,7 +38,7 @@ const pillars: PillarData[] = [
     overview:
       'Designing and operating dependable multi-site systems. Spanning physical structured cabling, switch provisioning, VLAN segmentation, branch WAN/MPLS routing, and enterprise Microsoft 365 / Entra ID cloud administration.',
     architecturalPrinciples: [
-      'Isolated VLAN zones (PCI-DSS compliant POS networks separated from staff LAN and guest traffic)',
+      'Isolated VLAN zones separating POS, staff and guest network traffic',
       'High-availability gateway routing with redundant failover and IPSec site-to-site VPN tunnels',
       'Auditable structured cabling and rack management documentation across multi-branch retail sites',
       'Centralized cloud identity lifecycle management via Microsoft Entra ID and RBAC policies',
@@ -105,8 +105,8 @@ const pillars: PillarData[] = [
       },
     ],
     proofMetric: {
-      value: '30%',
-      label: 'reduction in security incidents through proactive hardening and automated endpoint detection',
+      value: 'CVD',
+      label: 'research-led vulnerability disclosure and defensive security engineering',
     },
   },
   {
@@ -138,11 +138,12 @@ const pillars: PillarData[] = [
     linkedProjects: [
       { title: 'SheriaBot Regulatory Intelligence', slug: 'sheriabot', tag: 'Flagship SaaS' },
       { title: 'Adek Tatu', slug: 'adek-tatu', tag: 'Client Website' },
-      { title: 'Kolwa Beba SACCO', slug: 'kolwa-beba-sacco', tag: 'Financial Portal' },
+      { title: 'Kolwa Beba SACCO', slug: 'kolwa-beba-sacco', tag: 'Financial Services Website' },
+      { title: 'RentWorks East Africa', slug: 'rentworks-east-africa', tag: 'Website & SEO' },
     ],
     proofMetric: {
-      value: '100%',
-      label: 'pre-rendered static routes and responsive client interfaces across production deployments',
+      value: 'React',
+      label: 'Next.js and TypeScript interfaces supported by Node.js APIs and PostgreSQL',
     },
   },
   {
@@ -184,14 +185,14 @@ const pillars: PillarData[] = [
       },
     ],
     proofMetric: {
-      value: '25%',
-      label: 'faster incident triage and operational task resolution via automated notification pipelines',
+      value: 'n8n',
+      label: 'API integration, webhooks, error handling and human review workflows',
     },
   },
 ]
 
 export function CapabilityExplorer() {
-  const [selectedPillarId, setSelectedPillarId] = useState<PillarId>('infrastructure')
+  const [selectedPillarId, setSelectedPillarId] = useState<PillarId>('software')
   const activePillar = pillars.find((p) => p.id === selectedPillarId) || pillars[0]
 
   return (
