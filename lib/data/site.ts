@@ -8,7 +8,7 @@ export const siteConfig: SiteConfig = {
   secondaryTagline:
     'From physical networks and enterprise cloud infrastructure to secure applications and intelligent automation, I turn complex technical challenges into dependable solutions.',
   positioning:
-    'Systems Infrastructure & Cloud Security Specialist | Software Developer | AI Automation Engineer | Independent ICT Consultant',
+    'Full-Stack React & Next.js Engineer | Infrastructure & Cybersecurity Specialist | AI Automation Developer',
   siteUrl: 'https://crateng.co.ke',
   contact: {
     email: 'crateng13@gmail.com',

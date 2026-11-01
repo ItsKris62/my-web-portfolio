@@ -9,7 +9,7 @@ export const projects: Project[] = [
     projectType: 'SaaS Product',
     client: 'Founder-led product',
     year: '2024—Present',
-    role: 'Founder, Product Builder & Developer',
+    role: 'Founder & Full-Stack Engineer',
     description:
       'A regulatory intelligence platform designed to help fintech and regulated organisations navigate complex compliance requirements across African markets.',
     fullDescription:
@@ -33,13 +33,14 @@ export const projects: Project[] = [
     solution:
       'A web application that pairs a structured regulatory knowledge base with retrieval-assisted workflows, surfacing sourced guidance while keeping human review in the loop.',
     implementationHighlights: [
+      'Type-safe API design with Fastify, tRPC, Prisma and PostgreSQL',
       'PostgreSQL-backed data model for regulatory content',
       'Authentication and role-based access controls',
       'AI-assisted research workflows with sourcing',
       'Secure application development practices',
       'Cloud deployment and operational monitoring',
     ],
-    technologies: ['Next.js', 'TypeScript', 'PostgreSQL', 'AI workflows', 'Node.js'],
+    technologies: ['React', 'Next.js', 'TypeScript', 'Node.js', 'Fastify', 'tRPC', 'Prisma', 'PostgreSQL', 'Supabase', 'Docker', 'n8n', 'RAG'],
     coverImage: '/og/SheriaBot AI User Dashboard.png',
     desktopScreenshots: [
       {
@@ -72,18 +73,19 @@ export const projects: Project[] = [
     projectType: 'Client Website',
     client: 'Adek Tatu',
     year: '2025',
-    role: 'Web Developer & Designer',
+    role: 'Full-Stack Web Engineer & Designer',
     description:
       'A client website project focused on delivering a professional digital experience, with attention to responsive presentation, interface usability, and maintainable web implementation.',
     fullDescription: undefined,
     overview:
-      'A professional client website project with a focus on responsive presentation, interface usability, and maintainable web implementation.',
+      'A full-stack client web application combining a responsive Next.js interface with a dedicated Fastify and PostgreSQL backend. Public details are intentionally limited to the architectural scope and non-sensitive implementation work.',
     responsibilities: [
-      'Website design and frontend implementation',
-      'Responsive layout development',
-      'Deployment and hosting configuration',
+      'React/Next.js frontend design and responsive implementation',
+      'Node.js and Fastify API development with PostgreSQL data models',
+      'Application administration and authentication workflows',
+      'Deployment, hosting configuration and CI/CD',
     ],
-    technologies: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Vercel'],
+    technologies: ['React', 'Next.js', 'TypeScript', 'Fastify', 'PostgreSQL', 'Drizzle ORM', 'Tailwind CSS', 'CI/CD'],
     coverImage: '/og/adek_tatu_website.png',
     desktopScreenshots: [
       {
@@ -93,7 +95,8 @@ export const projects: Project[] = [
     ],
     mobileScreenshots: [],
     outcomes: [],
-    websiteUrl: 'https://adek-tatu.vercel.app',
+    // The client site is intentionally not linked publicly.
+    websiteUrl: undefined,
     repositoryUrl: undefined,
     publishStatus: 'published',
     publicationApproved: true,
@@ -110,16 +113,17 @@ export const projects: Project[] = [
     year: '2025',
     role: 'Web Developer',
     description:
-      'A website for Kolwa Beba SACCO, presenting the organisation’s digital presence through a professional and accessible web experience.',
+      'A Next.js and React web portal with an administration dashboard, user-management interfaces and structured data-import workflows.',
     fullDescription: undefined,
     overview:
-      'A website project for a SACCO, demonstrating a trustworthy, clear, and professional digital presence for a financial-services organisation.',
+      'A financial-services web application and administrative interface focused on accessible, responsive flows for user administration, structured data imports and platform configuration.' ,
     responsibilities: [
       'Website design and frontend implementation',
       'Information architecture and content organisation',
       'Responsive and accessible layout development',
+      'Implementation of administration and data-import user interfaces',
     ],
-    technologies: ['Next.js', 'TypeScript', 'Tailwind CSS'],
+    technologies: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS 4', 'Radix UI', 'React Hook Form', 'Zod'],
     coverImage: '/og/kolwa_admin_dashboard.png',
     desktopScreenshots: [
       {
@@ -135,6 +139,80 @@ export const projects: Project[] = [
     publicationApproved: true,
     featured: false,
     displayOrder: 3,
+  },
+  {
+    slug: 'christopher-rateng-portfolio',
+    title: 'Christopher Rateng — Engineering Portfolio',
+    category: 'Client Websites',
+    industry: 'Independent Engineering / Personal Brand',
+    projectType: 'Client Website',
+    client: 'Independent project',
+    year: '2026',
+    role: 'Frontend Engineer & Creative Developer',
+    description:
+      'A custom-built React and Next.js engineering portfolio combining case studies, responsive interfaces, technical storytelling and accessible interactions.',
+    fullDescription:
+      'An independently developed Next.js portfolio that presents software, infrastructure, cybersecurity and automation work through interactive case studies and a distinctive design system.',
+    overview:
+      'Designed and developed to communicate engineering expertise, make practical work easier to explore, and connect both potential clients and employers with relevant case studies.',
+    responsibilities: [
+      'Architecture and implementation with Next.js App Router, React and TypeScript',
+      'Reusable UI components, responsive layouts and custom visual identity',
+      'Interactive engineering capability panels and accessible navigation',
+      'Metadata, structured data and static project routes',
+    ],
+    implementationHighlights: [
+      'Next.js App Router with typed, data-driven project pages',
+      'CSS-based network and pulse motifs with restrained scroll-linked motion',
+      'Mobile-friendly case-study navigation and SEO metadata',
+    ],
+    technologies: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS 4', 'Vercel', 'SEO', 'Accessible UI'],
+    outcomes: [
+      'Public portfolio with separate technical case-study routes',
+      'Clearer paths for client enquiries and recruitment conversations',
+    ],
+    websiteUrl: 'https://www.crateng.co.ke',
+    repositoryUrl: 'https://github.com/ItsKris62/my-web-portfolio',
+    publishStatus: 'published',
+    publicationApproved: true,
+    featured: false,
+    displayOrder: 4,
+  },
+  {
+    slug: 'rentworks-web-seo',
+    title: 'Rentworks — Website SEO & Technical Strategy',
+    category: 'Client Websites',
+    industry: 'Leasing / Financial Services',
+    projectType: 'Client Website',
+    client: 'Rentworks',
+    year: '2026',
+    role: 'Website SEO Research & Technical Strategy',
+    description:
+      'An ongoing website visibility initiative involving competitor research, Kenya-focused keyword mapping, technical SEO recommendations and AI-search discoverability planning.',
+    fullDescription:
+      'Research and planning work aimed at helping a leasing business improve organic discovery in Kenya. The engagement covers page-level keyword strategy, competitor comparisons and recommendations for technical SEO and AI-search visibility. Improvements are being planned and assessed; ranking gains are not claimed.',
+    overview:
+      'A digital visibility and website improvement engagement for a leasing-sector business, with a focus on connecting search intent to service-page content and identifying technical barriers to discovery.',
+    objectives: [
+      'Map relevant leasing and related search queries to priority pages',
+      'Identify content and technical SEO opportunities',
+      'Define measurements for organic traffic, indexing and enquiries',
+    ],
+    responsibilities: [
+      'Competitor keyword and content research',
+      'Page-level SEO recommendations and content mapping',
+      'Planning technical SEO checks and monitoring',
+    ],
+    technologies: ['Technical SEO', 'Keyword Research', 'Website Audit', 'Search Console', 'Analytics'],
+    outcomes: [
+      'Page-oriented keyword strategy and implementation recommendations prepared',
+      'Measurement and optimization roadmap defined; performance results pending validation',
+    ],
+    websiteUrl: 'https://rentworks.co.ke/',
+    publishStatus: 'published',
+    publicationApproved: true,
+    featured: false,
+    displayOrder: 5,
   },
   {
     slug: 'enterprise-network-deployment',

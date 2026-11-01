@@ -1,6 +1,7 @@
 import { SiteHeader } from '@/components/site-header'
 import { HeroSection } from '@/components/hero-section'
 import { FeaturedWorkBento } from '@/components/featured-work-bento'
+import { EngineeringStack } from '@/components/engineering-stack'
 import { CapabilityExplorer } from '@/components/capability-explorer'
 import { InteractiveCareer } from '@/components/interactive-career'
 import { ServicesSection } from '@/components/services-section'
@@ -15,6 +16,7 @@ export default function PortfolioPage() {
       <main id="main-content">
         <HeroSection />
         <FeaturedWorkBento />
+        <EngineeringStack />
         <CapabilityExplorer />
         <InteractiveCareer />
         <ServicesSection />
