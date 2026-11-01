@@ -137,6 +137,56 @@ export const projects: Project[] = [
     displayOrder: 3,
   },
   {
+    slug: 'rentworks-east-africa',
+    title: 'RentWorks East Africa',
+    category: 'Client Websites',
+    industry: 'Equipment Leasing & Asset Finance',
+    projectType: 'Client Website',
+    client: 'RentWorks East Africa',
+    year: '2026',
+    role: 'Website implementation, maintenance & SEO',
+    description:
+      'Corporate website improvements and ongoing SEO work for an East African equipment-leasing business, with a focus on service discovery and clear content.',
+    fullDescription:
+      'Working on the public-facing RentWorks East Africa website, including site improvements, page-level search optimisation, and clearer communication of equipment-leasing services. Organic ranking outcomes are not claimed while optimisation work is ongoing.',
+    overview:
+      'RentWorks offers equipment leasing and asset finance to businesses across sectors. The website needs to make its services, industries, and enquiry routes understandable for prospective customers.',
+    problem:
+      'Prospective customers need to quickly find the relevant leasing solution and understand how to make an enquiry; discoverability through search also matters.',
+    objectives: [
+      'Clarify presentation of leasing services and industry-specific pages',
+      'Improve website usability and responsive presentation',
+      'Map relevant Kenyan search topics to appropriate pages',
+      'Support ongoing technical and on-page SEO improvements',
+    ],
+    responsibilities: [
+      'Website content and implementation improvements',
+      'Page structure and search-keyword mapping',
+      'On-page SEO and content recommendations',
+      'Ongoing website maintenance and optimisation',
+    ],
+    solution:
+      'An iterative website and SEO improvement engagement focused on navigation, service content, page relevance, and long-term maintainability.',
+    implementationHighlights: [
+      'Corporate content and leasing-service presentation',
+      'Page-level keyword targeting for Kenya',
+      'Technical SEO improvement planning and implementation',
+    ],
+    technologies: ['WordPress', 'Technical SEO', 'On-page SEO', 'Responsive Design'],
+    desktopScreenshots: [],
+    mobileScreenshots: [],
+    outcomes: [
+      'Public-facing corporate website for leasing and asset-finance enquiries',
+      'Page-specific search strategy and optimisation work in progress',
+    ],
+    websiteUrl: 'https://rentworks.co.ke',
+    repositoryUrl: undefined,
+    publishStatus: 'published',
+    publicationApproved: true,
+    featured: false,
+    displayOrder: 4,
+  },
+  {
     slug: 'enterprise-network-deployment',
     title: 'Enterprise Infrastructure & Network Deployment',
     category: 'Infrastructure',
@@ -175,7 +225,7 @@ export const projects: Project[] = [
     publishStatus: 'published',
     publicationApproved: true,
     featured: false,
-    displayOrder: 4,
+    displayOrder: 5,
   },
   {
     slug: 'cybersecurity-monitoring-lab',
@@ -210,7 +260,7 @@ export const projects: Project[] = [
     publishStatus: 'published',
     publicationApproved: true,
     featured: false,
-    displayOrder: 5,
+    displayOrder: 6,
   },
   {
     slug: 'automation-workflow-engineering',
@@ -245,7 +295,7 @@ export const projects: Project[] = [
     publishStatus: 'published',
     publicationApproved: true,
     featured: false,
-    displayOrder: 6,
+    displayOrder: 7,
   },
 ]
 
