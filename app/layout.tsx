@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     type: 'profile',
     locale: 'en_US',
     url: siteUrl,
-    title: 'Christopher Rateng — IT Infrastructure, Cybersecurity, Software & AI Automation',
+    title: 'Christopher Rateng | Full-Stack React & Next.js Engineer, Security & Cloud',
     description:
       'Full-stack React and Next.js engineering, reliable infrastructure, cybersecurity, and AI automation. Explore real projects and discuss a build.',
     siteName: 'Christopher Rateng',
@@ -90,7 +90,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Christopher Rateng — IT Infrastructure, Cybersecurity, Software & AI Automation',
+    title: 'Christopher Rateng | Full-Stack React & Next.js Engineer, Security & Cloud',
     description:
       'Full-stack software engineer, infrastructure and cybersecurity practitioner, and founder of SheriaBot.',
     images: ['/branding/christopher-rateng-logo-social.png'],
