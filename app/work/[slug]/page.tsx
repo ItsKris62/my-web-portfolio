@@ -268,6 +268,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           )}
 
           {/* Visual Showcase: Real Screenshots OR Authentic Technical Diagrams */}
+          {((project.desktopScreenshots && project.desktopScreenshots.length > 0) ||
+            ['enterprise-network-deployment', 'cybersecurity-monitoring-lab', 'automation-workflow-engineering'].includes(project.slug)) && (
           <div className="case-section">
             <h2>Visual Showcase &amp; Architecture</h2>
             {project.desktopScreenshots && project.desktopScreenshots.length > 0 ? (
@@ -301,6 +303,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               </div>
             )}
           </div>
+          )}
 
           {project.outcomes && project.outcomes.length > 0 && (
             <div className="case-section">
