@@ -127,12 +127,16 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           url: siteUrl,
         },
         keywords: project.technologies.join(', '),
-        datePublished: `${project.year}-01-01`,
       },
     ],
   }
 
   const isFlagship = project.slug === 'sheriabot'
+  const hasTechnicalDiagram = [
+    'enterprise-network-deployment',
+    'cybersecurity-monitoring-lab',
+    'automation-workflow-engineering',
+  ].includes(project.slug)
 
   return (
     <div className="site-shell project-detail">
@@ -268,7 +272,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           )}
 
           {/* Visual Showcase: Real Screenshots OR Authentic Technical Diagrams */}
-          <div className="case-section">
+          {(Boolean(project.desktopScreenshots?.length) || hasTechnicalDiagram) && <div className="case-section">
             <h2>Visual Showcase &amp; Architecture</h2>
             {project.desktopScreenshots && project.desktopScreenshots.length > 0 ? (
               <div className="screenshot-gallery">
@@ -300,11 +304,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 </p>
               </div>
             )}
-          </div>
+          </div>}
 
           {project.outcomes && project.outcomes.length > 0 && (
             <div className="case-section">
-              <h2>Verified Outcomes &amp; Impact</h2>
+              <h2>Selected Deliverables &amp; Outcomes</h2>
               <ul className="case-bullet-list">
                 {project.outcomes.map((o, i) => (
                   <li key={i}>
