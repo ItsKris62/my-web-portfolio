@@ -73,18 +73,19 @@ export const projects: Project[] = [
     projectType: 'Client Website',
     client: 'Adek Tatu',
     year: '2025',
-    role: 'Web Developer & Designer',
+    role: 'Full-Stack Web Engineer & Designer',
     description:
       'A client website project focused on delivering a professional digital experience, with attention to responsive presentation, interface usability, and maintainable web implementation.',
     fullDescription: undefined,
     overview:
-      'A professional client website project with a focus on responsive presentation, interface usability, and maintainable web implementation.',
+      'A full-stack client web application combining a responsive Next.js interface with a dedicated Fastify and PostgreSQL backend. Public details are intentionally limited to the architectural scope and non-sensitive implementation work.',
     responsibilities: [
-      'Website design and frontend implementation',
-      'Responsive layout development',
-      'Deployment and hosting configuration',
+      'React/Next.js frontend design and responsive implementation',
+      'Node.js and Fastify API development with PostgreSQL data models',
+      'Application administration and authentication workflows',
+      'Deployment, hosting configuration and CI/CD',
     ],
-    technologies: ['Next.js', 'TypeScript', 'Tailwind CSS', 'CI/CD', 'Truehost'],
+    technologies: ['React', 'Next.js', 'TypeScript', 'Fastify', 'PostgreSQL', 'Drizzle ORM', 'Tailwind CSS', 'CI/CD'],
     coverImage: '/og/adek_tatu_website.png',
     desktopScreenshots: [
       {
