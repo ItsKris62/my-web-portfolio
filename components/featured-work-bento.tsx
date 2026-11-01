@@ -128,7 +128,7 @@ export function FeaturedWorkBento() {
 
                   <div className="flagship-role-strip">
                     <span className="role-spec"><strong>ROLE:</strong> {flagshipProject.role}</span>
-                    <span className="role-spec"><strong>IMPACT:</strong> 1,200+ statutes indexed &bull; Sub-second precision</span>
+                    <span className="role-spec"><strong>FOCUS:</strong> Source-grounded compliance research &bull; Human review</span>
                   </div>
 
                   <div className="flagship-impact-bullets">
