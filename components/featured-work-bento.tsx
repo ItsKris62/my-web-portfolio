@@ -79,7 +79,7 @@ export function FeaturedWorkBento() {
           </h2>
         </div>
         <p className="work-header-desc">
-          Production SaaS, client websites, hardened enterprise infrastructure, and event-driven automation.
+          Full-stack React/Next.js applications, client web experiences, security-minded infrastructure, and reliable workflow automation.
           Every project links to a dedicated technical case study.
         </p>
       </div>
@@ -127,7 +127,7 @@ export function FeaturedWorkBento() {
                   <p className="flagship-desc">{flagshipProject.description}</p>
 
                   <div className="flagship-role-strip">
-                    <span className="role-spec"><strong>ROLE:</strong> Founder &amp; Full-Stack Architect</span>
+                    <span className="role-spec"><strong>ROLE:</strong> {flagshipProject.role}</span>
                     <span className="role-spec"><strong>IMPACT:</strong> 1,200+ statutes indexed &bull; Sub-second precision</span>
                   </div>
 
