@@ -48,17 +48,17 @@ export function ConversionFooter() {
           <div className="conversion-card-badge">BUSINESS CLIENTS &bull; CONSULTING</div>
           <h3 className="conversion-card-title">For Founders, SMEs &amp; Organizations</h3>
           <p className="conversion-card-desc">
-            Direct advisory and engineering implementation for cloud identity, defensive cybersecurity, multi-site
-            networks, or custom web/SaaS builds.
+            Modern websites and React/Next.js applications, backend integrations, cloud administration,
+            infrastructure support, and practical security improvements.
           </p>
 
           <div className="conversion-card-actions">
             <a
               id="client-cta-consult"
               className="button button-orange w-full text-center"
-              href={`mailto:${siteConfig.contact.email}?subject=ICT%20Consultation%20Request%20%E2%80%94%20Christopher%20Rateng`}
+              href={`mailto:${siteConfig.contact.email}?subject=Website%20or%20Software%20Project%20Enquiry`}
             >
-              Request an ICT Consultation <ArrowUpRight className="w-4 h-4" />
+              Discuss a Website or Software Project <ArrowUpRight className="w-4 h-4" />
             </a>
 
             <a
@@ -66,7 +66,7 @@ export function ConversionFooter() {
               className="button button-outline-light w-full text-center"
               href={`mailto:${siteConfig.contact.email}?subject=Security%20%26%20Infrastructure%20Assessment%20Request`}
             >
-              Book an Infrastructure Assessment <ArrowUpRight className="w-4 h-4" />
+              Request an IT or Security Review <ArrowUpRight className="w-4 h-4" />
             </a>
           </div>
 
@@ -176,7 +176,7 @@ export function ConversionFooter() {
           </div>
           <div>
             <strong>{siteConfig.name}</strong>
-            <small>Systems Infrastructure &bull; Cloud Security &bull; Software</small>
+            <small>Software Engineering &bull; Infrastructure &bull; Security</small>
           </div>
         </div>
 
