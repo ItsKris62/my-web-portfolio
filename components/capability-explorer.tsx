@@ -117,7 +117,7 @@ const pillars: PillarData[] = [
     icon: SoftwareIcon,
     accentColor: 'var(--ink)',
     overview:
-      'Full-stack engineering combining modern React and Next.js architectures with clean TypeScript typing, relational PostgreSQL data stores, secure API backends, and maintainable frontend user experiences.',
+      'Full-stack application development with React and Next.js interfaces, TypeScript APIs built with Node.js and Fastify, structured PostgreSQL data and pragmatic production delivery. Also familiar with NestJS application patterns.',
     architecturalPrinciples: [
       'Strict TypeScript contracts across data fetching, UI state, and database models',
       'Server-driven architecture with Next.js App Router for optimal performance and SEO pre-rendering',
@@ -129,16 +129,18 @@ const pillars: PillarData[] = [
       'Next.js 16 (App Router & SSG)',
       'React 19 & State Primitives',
       'PostgreSQL & Relational Schema',
-      'REST API Design & Fastify/Node',
+      'REST APIs, Fastify & tRPC',
+      'NestJS (framework familiarity)',
       'Tailwind CSS & Design Tokens',
       'Git Version Control & CI/CD',
       'Responsive Web Architecture',
     ],
-    specializedTools: ['Prisma ORM', 'Vercel Platform', 'Docker', 'Postman', 'Shadcn Primitives'],
+    specializedTools: ['Prisma ORM', 'Drizzle ORM', 'Supabase', 'Vercel', 'Render', 'Docker', 'Postman'],
     linkedProjects: [
       { title: 'SheriaBot Regulatory Intelligence', slug: 'sheriabot', tag: 'Flagship SaaS' },
       { title: 'Adek Tatu', slug: 'adek-tatu', tag: 'Client Website' },
       { title: 'Kolwa Beba SACCO', slug: 'kolwa-beba-sacco', tag: 'Financial Portal' },
+      { title: 'Engineering Portfolio', slug: 'christopher-rateng-portfolio', tag: 'Next.js Case Study' },
     ],
     proofMetric: {
       value: '100%',
@@ -191,7 +193,7 @@ const pillars: PillarData[] = [
 ]
 
 export function CapabilityExplorer() {
-  const [selectedPillarId, setSelectedPillarId] = useState<PillarId>('infrastructure')
+  const [selectedPillarId, setSelectedPillarId] = useState<PillarId>('software')
   const activePillar = pillars.find((p) => p.id === selectedPillarId) || pillars[0]
 
   return (
