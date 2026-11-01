@@ -28,11 +28,11 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || siteConfig.siteUrl || 'https
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Christopher Rateng — IT Infrastructure, Cybersecurity, Software & AI Automation',
+    default: 'Christopher Rateng — Full-Stack React/Next.js, Cybersecurity & IT Engineering',
     template: '%s — Christopher Rateng',
   },
   description:
-    'Christopher Rateng is a Nairobi-based Systems Infrastructure & Cloud Security Specialist, Software Developer, AI Automation Engineer, and founder of SheriaBot. Building secure, automated, and dependable enterprise technology systems.',
+    'Christopher Rateng is a full-stack React, Next.js and Node.js engineer with experience in Fastify, PostgreSQL, IT infrastructure, cybersecurity and AI automation. Explore real applications and client projects.',
   applicationName: 'Christopher Rateng Portfolio',
   keywords: [
     'Christopher Rateng',
@@ -45,6 +45,9 @@ export const metadata: Metadata = {
     'Network Engineer Nairobi',
     'Software Developer Kenya',
     'Full-Stack Developer Nairobi',
+    'React Developer Kenya',
+    'Next.js Engineer Kenya',
+    'Node.js Fastify Developer',
     'AI Automation Engineer Kenya',
     'SheriaBot Founder',
     'Fintech Engineering East Africa',
@@ -65,7 +68,7 @@ export const metadata: Metadata = {
     type: 'profile',
     locale: 'en_US',
     url: siteUrl,
-    title: 'Christopher Rateng — IT Infrastructure, Cybersecurity, Software & AI Automation',
+    title: 'Christopher Rateng — Full-Stack React/Next.js, Cybersecurity & IT Engineering',
     description:
       'Nairobi-based Systems Infrastructure & Cloud Security Specialist, Software Developer, AI Automation Engineer, and founder of SheriaBot. I build, secure, automate, and support the technology businesses depend on.',
     siteName: 'Christopher Rateng',
@@ -181,6 +184,7 @@ const structuredDataGraph = {
         'Cloud Security & Architecture',
         'Microsoft 365 Enterprise Administration',
         'Software Engineering & API Architecture',
+        'React, Next.js, TypeScript, Fastify and PostgreSQL',
         'AI Automation & Intelligent Agent Workflows',
         'Fintech Integrations & Payment Gateways',
         'Regulatory Technology (RegTech)',
