@@ -209,6 +209,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </div>
           )}
 
+          {project.problem && (
+            <div className="case-section">
+              <h2>The Problem</h2>
+              <p>{project.problem}</p>
+            </div>
+          )}
+
           {project.objectives && project.objectives.length > 0 && (
             <div className="case-section">
               <h2>Key Objectives</h2>
@@ -241,6 +248,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <div className="case-section">
               <h2>Architectural Solution</h2>
               <p>{project.solution}</p>
+            </div>
+          )}
+
+          {project.technicalApproach && (
+            <div className="case-section">
+              <h2>Technical Approach</h2>
+              <p>{project.technicalApproach}</p>
             </div>
           )}
 
