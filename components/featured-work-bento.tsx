@@ -79,8 +79,8 @@ export function FeaturedWorkBento() {
           </h2>
         </div>
         <p className="work-header-desc">
-          Production SaaS, client websites, hardened enterprise infrastructure, and event-driven automation.
-          Every project links to a dedicated technical case study.
+          Software products, client websites, infrastructure, security work, and practical automation.
+          Explore the problem, my contribution, the technologies, and the deliverables behind each project.
         </p>
       </div>
 
@@ -118,7 +118,7 @@ export function FeaturedWorkBento() {
                   <div className="bento-tag-row">
                     <span className="bento-category">{flagshipProject.category}</span>
                     <span className="bento-year">{flagshipProject.year}</span>
-                    <span className="bento-status">Production Active</span>
+                    <span className="bento-status">Founder-led product</span>
                   </div>
 
                   <h3 className="flagship-title">
@@ -127,8 +127,8 @@ export function FeaturedWorkBento() {
                   <p className="flagship-desc">{flagshipProject.description}</p>
 
                   <div className="flagship-role-strip">
-                    <span className="role-spec"><strong>ROLE:</strong> Founder &amp; Full-Stack Architect</span>
-                    <span className="role-spec"><strong>IMPACT:</strong> 1,200+ statutes indexed &bull; Sub-second precision</span>
+                    <span className="role-spec"><strong>ROLE:</strong> Founder &amp; Product Developer</span>
+                    <span className="role-spec"><strong>FOCUS:</strong> Web application &bull; APIs &bull; Responsible AI workflows</span>
                   </div>
 
                   <div className="flagship-impact-bullets">
@@ -175,7 +175,7 @@ export function FeaturedWorkBento() {
                         <span className="dot yellow" />
                         <span className="dot green" />
                       </div>
-                      <span className="browser-address-bar">sheriabot.co.ke</span>
+                      <span className="browser-address-bar">app.sheriabot.com</span>
                     </div>
                     <Link href={`/work/${flagshipProject.slug}`} className="flagship-preview-link">
                       {renderVisual(flagshipProject, true)}
