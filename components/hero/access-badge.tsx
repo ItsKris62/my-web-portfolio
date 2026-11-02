@@ -156,7 +156,7 @@ export function AccessBadge({ className = '', priority = true }: AccessBadgeProp
     holder.style.setProperty('--light-y', `${frame.holder.lightY.toFixed(1)}%`)
   }, [])
 
-  const { release, setPointerTarget } = useLanyardPhysics({
+  const { release, setPointerTarget, pointerActiveRef, requestOrientationPermission } = useLanyardPhysics({
     disabled: reducedMotion,
     onFrame: applyPhysicsFrame,
   })
@@ -236,6 +236,10 @@ export function AccessBadge({ className = '', priority = true }: AccessBadgeProp
       velocityX: 0,
       velocityY: 0,
     }
+    pointerActiveRef.current = true
+    if (isTouchPointer) {
+      void requestOrientationPermission()
+    }
     setIsTouchActive(true)
     setPointerTarget(
       interaction === 'badge' ? normalized.x * 0.42 : normalized.x,
@@ -261,6 +265,7 @@ export function AccessBadge({ className = '', priority = true }: AccessBadgeProp
     activePointerRef.current = null
     pointerInteractionRef.current = null
     pointerVelocityRef.current = null
+    pointerActiveRef.current = false
     setIsTouchActive(false)
 
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
@@ -286,6 +291,7 @@ export function AccessBadge({ className = '', priority = true }: AccessBadgeProp
       activePointerRef.current = null
       pointerInteractionRef.current = null
       pointerVelocityRef.current = null
+      pointerActiveRef.current = false
       setIsTouchActive(false)
       release()
     }

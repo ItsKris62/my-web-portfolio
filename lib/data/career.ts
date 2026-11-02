@@ -65,7 +65,7 @@ export const career: CareerMilestone[] = [
       'n8n',
     ],
     impact:
-      '30% reduction in security incidents · 25% improvement in incident resolution time · Support for 100+ endpoints · Mentorship of three junior engineers.',
+      'Proactive security baseline hardening, endpoint protection rollout, operational support for 100+ distributed endpoints, and technical mentorship of three junior engineers.',
     story:
       'Supporting distributed environments strengthened my understanding of reliability, proactive security, automation, and the importance of making technical operations measurable and repeatable.',
   },
@@ -93,5 +93,5 @@ export const stats: Stat[] = [
   { value: '5+', label: 'years in infrastructure & operations' },
   { value: '100+', label: 'endpoints and users supported' },
   { value: '200+', label: 'IT assets managed' },
-  { value: '30%', label: 'reduction in security incidents' },
+  { value: '3', label: 'junior engineers mentored' },
 ]

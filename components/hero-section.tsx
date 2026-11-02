@@ -18,10 +18,33 @@ export function HeroSection() {
   const badgeLayerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let isReduced = mediaQuery.matches
+
+    const clearTransforms = () => {
+      if (backgroundRef.current) backgroundRef.current.style.transform = ''
+      if (signalBusRef.current) signalBusRef.current.style.transform = ''
+      if (badgeLayerRef.current) badgeLayerRef.current.style.transform = ''
+    }
+
+    const syncReducedMotion = () => {
+      isReduced = mediaQuery.matches
+      if (isReduced) {
+        clearTransforms()
+      }
+    }
+
+    mediaQuery.addEventListener('change', syncReducedMotion)
+    if (isReduced) {
+      clearTransforms()
+      return () => mediaQuery.removeEventListener('change', syncReducedMotion)
+    }
+
     let ticking = false
     let frameId: number | null = null
 
     const handleScroll = () => {
+      if (isReduced) return
       if (!ticking) {
         frameId = window.requestAnimationFrame(() => {
           if (heroRef.current) {
@@ -42,6 +65,7 @@ export function HeroSection() {
     window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
     return () => {
+      mediaQuery.removeEventListener('change', syncReducedMotion)
       window.removeEventListener('scroll', handleScroll)
       if (frameId !== null) window.cancelAnimationFrame(frameId)
     }
