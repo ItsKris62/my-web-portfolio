@@ -171,11 +171,11 @@ export function HeroSection() {
         </p>
 
         <h1 id="hero-headline" className="hero-title-animate">
-          I build, secure, automate
+          I build software,
           <br />
-          <em>&amp; maintain</em>
+          <em>secure systems</em>
           <br />
-          technology.
+          &amp; useful automation.
         </h1>
 
         <p className="hero-lede hero-lede-animate">
@@ -188,7 +188,7 @@ export function HeroSection() {
             <ArrowDownRight aria-hidden="true" className="w-4 h-4 arrow-shift" />
           </a>
           <a id="hero-cta-consult" className="text-link hero-link-interactive" href="#contact">
-            <span>Request an ICT consultation</span>
+            <span>Discuss a project</span>
             <ArrowUpRight aria-hidden="true" className="w-4 h-4 arrow-shift" />
           </a>
         </div>
@@ -207,13 +207,13 @@ export function HeroSection() {
 
       <div className="hero-meta hero-meta-animate" aria-label="Core focus areas and physical base">
         <span className="meta-pill">
+          <SoftwareIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--ink)]" /> Full-Stack Development
+        </span>
+        <span className="meta-pill">
           <CybersecurityIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--orange)]" /> Cybersecurity
         </span>
         <span className="meta-pill">
           <InfrastructureIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--teal)]" /> Infrastructure
-        </span>
-        <span className="meta-pill">
-          <SoftwareIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--ink)]" /> Software Development
         </span>
         <span className="meta-pill">
           <AutomationIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--orange)]" /> AI Automation

@@ -28,11 +28,11 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || siteConfig.siteUrl || 'https
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Christopher Rateng — IT Infrastructure, Cybersecurity, Software & AI Automation',
+    default: 'Christopher Rateng | Full-Stack React & Next.js Engineer, Security & Cloud',
     template: '%s — Christopher Rateng',
   },
   description:
-    'Christopher Rateng is a Nairobi-based Systems Infrastructure & Cloud Security Specialist, Software Developer, AI Automation Engineer, and founder of SheriaBot. Building secure, automated, and dependable enterprise technology systems.',
+    'Christopher Rateng builds React and Next.js web applications, Node.js API integrations, secure cloud systems, and practical automation for businesses in Kenya and remote teams.',
   applicationName: 'Christopher Rateng Portfolio',
   keywords: [
     'Christopher Rateng',
@@ -44,6 +44,10 @@ export const metadata: Metadata = {
     'Microsoft 365 Consultant Kenya',
     'Network Engineer Nairobi',
     'Software Developer Kenya',
+    'Next.js Developer Kenya',
+    'React Developer Nairobi',
+    'Full-Stack TypeScript Engineer',
+    'Node.js API Integration',
     'Full-Stack Developer Nairobi',
     'AI Automation Engineer Kenya',
     'SheriaBot Founder',
@@ -65,9 +69,9 @@ export const metadata: Metadata = {
     type: 'profile',
     locale: 'en_US',
     url: siteUrl,
-    title: 'Christopher Rateng — IT Infrastructure, Cybersecurity, Software & AI Automation',
+    title: 'Christopher Rateng | Full-Stack React & Next.js Engineer, Security & Cloud',
     description:
-      'Nairobi-based Systems Infrastructure & Cloud Security Specialist, Software Developer, AI Automation Engineer, and founder of SheriaBot. I build, secure, automate, and support the technology businesses depend on.',
+      'Full-stack React and Next.js engineering, reliable infrastructure, cybersecurity, and AI automation. Explore real projects and discuss a build.',
     siteName: 'Christopher Rateng',
     images: [
       {
@@ -86,9 +90,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Christopher Rateng — IT Infrastructure, Cybersecurity, Software & AI Automation',
+    title: 'Christopher Rateng | Full-Stack React & Next.js Engineer, Security & Cloud',
     description:
-      'Systems Infrastructure & Cloud Security Specialist, Software Developer, AI Automation Engineer, and founder of SheriaBot.',
+      'Full-stack software engineer, infrastructure and cybersecurity practitioner, and founder of SheriaBot.',
     images: ['/branding/christopher-rateng-logo-social.png'],
     creator: '@ItsKris62',
   },
@@ -153,7 +157,7 @@ const structuredDataGraph = {
       '@id': `${siteUrl}/#person`,
       name: siteConfig.fullName,
       alternateName: [siteConfig.name, 'Kris Rateng', 'Christopher M. Rateng'],
-      jobTitle: 'Systems Infrastructure & Cloud Security Specialist',
+      jobTitle: 'Full-Stack Software Engineer and Infrastructure & Cybersecurity Specialist',
       description: siteConfig.tagline,
       url: siteUrl,
       image: `${siteUrl}/portraits/Christopher_rateng-Passport-Photo.jpg`,

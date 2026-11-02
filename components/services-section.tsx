@@ -34,7 +34,7 @@ const serviceProjectMap: Record<string, { title: string; slug: string }> = {
   'cloud-identity-m365': { title: 'Enterprise Network & Identity Deployment', slug: 'enterprise-network-deployment' },
   'sme-cybersecurity-grc': { title: 'Cybersecurity Monitoring Lab', slug: 'cybersecurity-monitoring-lab' },
   'network-infrastructure': { title: 'Enterprise Infrastructure Deployment', slug: 'enterprise-network-deployment' },
-  'web-design-development': { title: 'Adek Tatu & Kolwa Beba SACCO', slug: 'adek-tatu' },
+  'web-design-development': { title: 'Adek Tatu, Kolwa Beba & RentWorks', slug: 'rentworks-east-africa' },
   'ai-automation': { title: 'SheriaBot & Automation Workflows', slug: 'sheriabot' },
   'managed-it-operations': { title: 'Enterprise Operations Case Study', slug: 'enterprise-network-deployment' },
   'technical-consulting-training': { title: 'Cybersecurity & GRC Research', slug: 'cybersecurity-monitoring-lab' },
@@ -208,7 +208,7 @@ export function ServicesSection() {
 
             <div className="callout-actions">
               <Link href="#work" className="button button-orange">
-                Explore Websites I&apos;ve Built <ArrowUpRight className="w-4 h-4 arrow-shift" />
+                Explore Website &amp; Software Projects <ArrowUpRight className="w-4 h-4 arrow-shift" />
               </Link>
               <a
                 href={`mailto:${siteConfig.contact.email}?subject=${encodeURIComponent(
@@ -216,7 +216,7 @@ export function ServicesSection() {
                 )}`}
                 className="button button-outline"
               >
-                Discuss a Website Project <ArrowUpRight className="w-4 h-4 arrow-shift" />
+                Discuss a Website or App <ArrowUpRight className="w-4 h-4 arrow-shift" />
               </a>
             </div>
           </div>
