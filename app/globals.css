@@ -3846,6 +3846,15 @@ em,
 }
 
 /* Varied Architectural Bento Grid Layout Hierarchy */
+.bento-card-adek-tatu,
+.bento-card-kolwa-beba-sacco {
+  grid-column: span 6;
+}
+
+.bento-card-rentworks-east-africa {
+  grid-column: span 5;
+}
+
 .bento-card-enterprise-network-deployment {
   grid-column: span 7;
 }
@@ -3855,12 +3864,30 @@ em,
 }
 
 .bento-card-automation-workflow-engineering {
-  grid-column: span 12;
+  grid-column: span 7;
 }
 
-.bento-card-adek-tatu,
-.bento-card-kolwa-beba-sacco {
-  grid-column: span 6;
+.bento-card-media .tech-diagram-wrap,
+.bento-diagram {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  display: block;
+}
+
+.bento-fallback-visual {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .bento-card-media {
@@ -5882,6 +5909,7 @@ em,
 
   .bento-card-adek-tatu,
   .bento-card-kolwa-beba-sacco,
+  .bento-card-rentworks-east-africa,
   .bento-card-enterprise-network-deployment,
   .bento-card-cybersecurity-monitoring-lab,
   .bento-card-automation-workflow-engineering {
@@ -5911,6 +5939,7 @@ em,
 @media (max-width: 768px) {
   .bento-card-adek-tatu,
   .bento-card-kolwa-beba-sacco,
+  .bento-card-rentworks-east-africa,
   .bento-card-enterprise-network-deployment,
   .bento-card-cybersecurity-monitoring-lab,
   .bento-card-automation-workflow-engineering {

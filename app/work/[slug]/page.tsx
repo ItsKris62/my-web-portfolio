@@ -8,6 +8,7 @@ import {
   NetworkDeploymentDiagram,
   CybersecurityLabDiagram,
   AutomationWorkflowDiagram,
+  RentWorksDiagram,
 } from '@/components/technical-diagrams'
 
 interface ProjectPageProps {
@@ -133,6 +134,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   const isFlagship = project.slug === 'sheriabot'
   const hasTechnicalDiagram = [
+    'rentworks-east-africa',
     'enterprise-network-deployment',
     'cybersecurity-monitoring-lab',
     'automation-workflow-engineering',
@@ -307,6 +309,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               </div>
             ) : (
               <div className="case-diagram-container">
+                {project.slug === 'rentworks-east-africa' && <RentWorksDiagram />}
                 {project.slug === 'enterprise-network-deployment' && <NetworkDeploymentDiagram />}
                 {project.slug === 'cybersecurity-monitoring-lab' && <CybersecurityLabDiagram />}
                 {project.slug === 'automation-workflow-engineering' && <AutomationWorkflowDiagram />}

@@ -10,6 +10,7 @@ import {
   NetworkDeploymentDiagram,
   CybersecurityLabDiagram,
   AutomationWorkflowDiagram,
+  RentWorksDiagram,
 } from '@/components/technical-diagrams'
 
 export function FeaturedWorkBento() {
@@ -41,6 +42,9 @@ export function FeaturedWorkBento() {
       )
     }
 
+    if (project.slug === 'rentworks-east-africa') {
+      return <RentWorksDiagram className="bento-diagram" />
+    }
     if (project.slug === 'enterprise-network-deployment') {
       return <NetworkDeploymentDiagram className="bento-diagram" />
     }
