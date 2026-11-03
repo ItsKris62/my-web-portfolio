@@ -9,8 +9,6 @@ import {
   Cpu,
   ArrowUpRight,
   Workflow,
-  Network,
-  CheckCircle2,
 } from 'lucide-react'
 
 export type DisciplineId = 'fullstack' | 'infrastructure' | 'cybersecurity' | 'automation'
@@ -47,15 +45,15 @@ export const DISCIPLINES: Record<DisciplineId, DisciplineData> = {
     color: 'var(--orange)',
     icon: Code2,
     philosophy:
-      'Architecting software from database schemas to frontend interfaces with strict type contracts, maintainable module boundaries, and high-performance server components.',
+      'Architecting software from database schemas to frontend interfaces with strict type contracts, maintainable module boundaries, and server components.',
     handshake: [
       {
         target: 'Infrastructure',
-        detail: 'Containerized Linux deployment environments, Vercel Edge caching, and automated builds.',
+        detail: 'Containerized deployment environments, edge caching, and automated builds.',
       },
       {
         target: 'Cybersecurity',
-        detail: 'Least-privilege API authorization, server-side session hardening, and defensive input parsing with Zod.',
+        detail: 'Least-privilege API authorization, server-side session checks, and defensive input parsing with Zod.',
       },
       {
         target: 'Automation',
@@ -87,7 +85,7 @@ export const DISCIPLINES: Record<DisciplineId, DisciplineData> = {
       },
       {
         target: 'Cybersecurity',
-        detail: '802.1Q VLAN boundary segmentation, isolating critical payment systems from general traffic.',
+        detail: '802.1Q VLAN boundary segmentation, isolating POS payment terminals into dedicated subnets.',
       },
       {
         target: 'Automation',
@@ -99,7 +97,7 @@ export const DISCIPLINES: Record<DisciplineId, DisciplineData> = {
       slug: 'enterprise-network-deployment',
       summary: 'End-to-end commercial LAN/WAN infrastructure with isolated VLAN subnets and rack buildouts.',
     },
-    stack: ['LAN/WAN', '802.1Q VLANs', 'Linux', 'LiteSpeed', 'Structured Cabling', 'Hostinger'],
+    stack: ['LAN/WAN', '802.1Q VLANs', 'Linux', 'LiteSpeed', 'Structured Cabling', 'Network Monitoring'],
     coordinates: { x: 440, y: 80 },
   },
   cybersecurity: {
@@ -131,7 +129,7 @@ export const DISCIPLINES: Record<DisciplineId, DisciplineData> = {
       slug: 'cybersecurity-monitoring-lab',
       summary: 'Controlled security observability lab with Wazuh SIEM, auditd logging, and attack simulations.',
     },
-    stack: ['Wazuh SIEM', 'Suricata IDS', 'Auditd', 'Network Hardening', 'Access Control', 'Linux'],
+    stack: ['Wazuh SIEM', 'Suricata IDS', 'Auditd Logging', 'Network Hardening', 'Access Control', 'Linux'],
     coordinates: { x: 100, y: 300 },
   },
   automation: {
@@ -147,7 +145,7 @@ export const DISCIPLINES: Record<DisciplineId, DisciplineData> = {
     handshake: [
       {
         target: 'Full-Stack',
-        detail: 'Retrieval-augmented AI workflows, structured API payload dispatch, and UI event feedback.',
+        detail: 'Retrieval-assisted guidance workflows, structured JSON payloads, and automated notification triggers.',
       },
       {
         target: 'Infrastructure',
@@ -175,12 +173,11 @@ export function EngineeringWorkbench() {
   const [isHovered, setIsHovered] = useState<DisciplineId | null>(null)
   const [pulseActive, setPulseActive] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(false)
-  const [isInView, setIsInView] = useState(false)
-  const [pointerOffset, setPointerOffset] = useState({ x: 0, y: 0 })
 
   const containerRef = useRef<HTMLDivElement>(null)
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const pulseTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const isInViewRef = useRef(false)
 
   // 1. Check prefers-reduced-motion dynamically
   useEffect(() => {
@@ -192,19 +189,28 @@ export function EngineeringWorkbench() {
     return () => media.removeEventListener('change', handleMotionChange)
   }, [])
 
-  // 2. IntersectionObserver to pause work when off-screen
+  // 2. IntersectionObserver to pause motion when off-screen
   useEffect(() => {
     const el = containerRef.current
     if (!el || typeof IntersectionObserver === 'undefined') {
-      setIsInView(true)
+      isInViewRef.current = true
       return
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsInView(entry.isIntersecting)
+        isInViewRef.current = entry.isIntersecting
+        if (!entry.isIntersecting) {
+          // Reset parallax when scrolled out of view
+          el.style.setProperty('--wb-tilt-x', '0deg')
+          el.style.setProperty('--wb-tilt-y', '0deg')
+          if (pulseTimerRef.current) {
+            clearTimeout(pulseTimerRef.current)
+            setPulseActive(false)
+          }
+        }
       },
-      { threshold: 0.15 }
+      { threshold: 0.1 }
     )
 
     observer.observe(el)
@@ -215,7 +221,7 @@ export function EngineeringWorkbench() {
   const selectDiscipline = useCallback(
     (id: DisciplineId) => {
       setActiveDiscipline(id)
-      if (!reducedMotion) {
+      if (!reducedMotion && isInViewRef.current) {
         setPulseActive(true)
         if (pulseTimerRef.current) clearTimeout(pulseTimerRef.current)
         pulseTimerRef.current = setTimeout(() => {
@@ -232,24 +238,28 @@ export function EngineeringWorkbench() {
     }
   }, [])
 
-  // 4. Subtle, restrained 3D parallax on pointer move (max 2deg tilt, 4px shift)
+  // 4. Zero React re-renders on pointer move: direct DOM CSS Variable update!
   const handlePointerMove = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
-      if (reducedMotion || e.pointerType === 'touch') return
-      const rect = containerRef.current?.getBoundingClientRect()
-      if (!rect) return
-      const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1
-      const ny = ((e.clientY - rect.top) / rect.height) * 2 - 1
-      setPointerOffset({
-        x: Math.max(-1, Math.min(1, nx)),
-        y: Math.max(-1, Math.min(1, ny)),
-      })
+      if (reducedMotion || !isInViewRef.current || e.pointerType === 'touch') return
+      const el = containerRef.current
+      if (!el) return
+      const rect = el.getBoundingClientRect()
+      const nx = Math.max(-1, Math.min(1, ((e.clientX - rect.left) / rect.width) * 2 - 1))
+      const ny = Math.max(-1, Math.min(1, ((e.clientY - rect.top) / rect.height) * 2 - 1))
+
+      el.style.setProperty('--wb-tilt-x', `${(ny * -2.2).toFixed(2)}deg`)
+      el.style.setProperty('--wb-tilt-y', `${(nx * 2.5).toFixed(2)}deg`)
     },
     [reducedMotion]
   )
 
   const handlePointerLeave = useCallback(() => {
-    setPointerOffset({ x: 0, y: 0 })
+    const el = containerRef.current
+    if (el) {
+      el.style.setProperty('--wb-tilt-x', '0deg')
+      el.style.setProperty('--wb-tilt-y', '0deg')
+    }
   }, [])
 
   // 5. W3C ARIA Tablist keyboard navigation: Left/Right/Up/Down/Home/End
@@ -283,17 +293,9 @@ export function EngineeringWorkbench() {
   return (
     <div
       ref={containerRef}
-      className={`engineering-workbench ${isInView ? 'in-view' : ''}`}
+      className="engineering-workbench"
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      style={
-        {
-          '--wb-tilt-x': `${(pointerOffset.y * -2.2).toFixed(2)}deg`,
-          '--wb-tilt-y': `${(pointerOffset.x * 2.5).toFixed(2)}deg`,
-          '--wb-shift-x': `${(pointerOffset.x * 5).toFixed(1)}px`,
-          '--wb-shift-y': `${(pointerOffset.y * 5).toFixed(1)}px`,
-        } as React.CSSProperties
-      }
     >
       {/* ── Console Header Bar ── */}
       <div className="wb-header-bar">
@@ -306,7 +308,7 @@ export function EngineeringWorkbench() {
         </div>
       </div>
 
-      {/* ── Mobile-Optimized Segmented Control (2x2 grid at <=480px, tactile bar at <=768px) ── */}
+      {/* ── Mobile-Optimized Segmented Control (Maintains 48px Touch Targets) ── */}
       <div
         className="wb-segmented-tabs"
         role="tablist"
@@ -326,7 +328,7 @@ export function EngineeringWorkbench() {
               role="tab"
               id={`workbench-tab-${key}`}
               aria-selected={isSelected}
-              aria-controls={`workbench-panel-${key}`}
+              aria-controls="workbench-panel"
               tabIndex={isSelected ? 0 : -1}
               className={`wb-tab-btn ${isSelected ? 'active' : ''}`}
               onClick={() => selectDiscipline(key)}
@@ -357,89 +359,89 @@ export function EngineeringWorkbench() {
           >
             <defs>
               <pattern id="wb-matrix-grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
+                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
               </pattern>
               <linearGradient id="wb-center-glow" x1="0" y1="0" x2="1" y2="1">
-                <stop stopColor="#ff6433" stopOpacity="0.18" />
-                <stop offset="1" stopColor="#087f73" stopOpacity="0.18" />
+                <stop stopColor="#ff6433" stopOpacity="0.2" />
+                <stop offset="1" stopColor="#087f73" stopOpacity="0.2" />
               </linearGradient>
             </defs>
 
             {/* Substrate Grid */}
-            <rect width="540" height="380" rx="8" fill="#14171c" />
+            <rect width="540" height="380" rx="8" fill="#101317" />
             <rect width="540" height="380" fill="url(#wb-matrix-grid)" />
             <rect x="0.5" y="0.5" width="539" height="379" rx="7.5" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
 
             {/* Corner Precision Ticks */}
-            <path d="M 12 20 L 20 20 M 20 12 L 20 20" stroke="rgba(255,255,255,0.2)" strokeWidth="1.2" />
-            <path d="M 528 20 L 520 20 M 520 12 L 520 20" stroke="rgba(255,255,255,0.2)" strokeWidth="1.2" />
-            <path d="M 12 360 L 20 360 M 20 368 L 20 360" stroke="rgba(255,255,255,0.2)" strokeWidth="1.2" />
-            <path d="M 528 360 L 520 360 M 520 368 L 520 360" stroke="rgba(255,255,255,0.2)" strokeWidth="1.2" />
+            <path d="M 12 20 L 20 20 M 20 12 L 20 20" stroke="rgba(255,255,255,0.25)" strokeWidth="1.2" />
+            <path d="M 528 20 L 520 20 M 520 12 L 520 20" stroke="rgba(255,255,255,0.25)" strokeWidth="1.2" />
+            <path d="M 12 360 L 20 360 M 20 368 L 20 360" stroke="rgba(255,255,255,0.25)" strokeWidth="1.2" />
+            <path d="M 528 360 L 520 360 M 520 368 L 520 360" stroke="rgba(255,255,255,0.25)" strokeWidth="1.2" />
 
             {/* ── Static Background Bus Channels ── */}
             {/* Horizontal Perimeter Buses */}
-            <line x1="100" y1="80" x2="440" y2="80" stroke="rgba(255,255,255,0.09)" strokeWidth="1.5" />
-            <line x1="100" y1="300" x2="440" y2="300" stroke="rgba(255,255,255,0.09)" strokeWidth="1.5" />
+            <line x1="100" y1="80" x2="440" y2="80" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" />
+            <line x1="100" y1="300" x2="440" y2="300" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" />
             {/* Vertical Perimeter Buses */}
-            <line x1="100" y1="80" x2="100" y2="300" stroke="rgba(255,255,255,0.09)" strokeWidth="1.5" />
-            <line x1="440" y1="80" x2="440" y2="300" stroke="rgba(255,255,255,0.09)" strokeWidth="1.5" />
+            <line x1="100" y1="80" x2="100" y2="300" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" />
+            <line x1="440" y1="80" x2="440" y2="300" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" />
 
             {/* Radial Spokes connecting 4 nodes to the Synthesis Core */}
-            <line x1="100" y1="80" x2={centerPos.x} y2={centerPos.y} stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" strokeDasharray="3 3" />
-            <line x1="440" y1="80" x2={centerPos.x} y2={centerPos.y} stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" strokeDasharray="3 3" />
-            <line x1="100" y1="300" x2={centerPos.x} y2={centerPos.y} stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" strokeDasharray="3 3" />
-            <line x1="440" y1="300" x2={centerPos.x} y2={centerPos.y} stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" strokeDasharray="3 3" />
+            <line x1="100" y1="80" x2={centerPos.x} y2={centerPos.y} stroke="rgba(255,255,255,0.14)" strokeWidth="1.5" strokeDasharray="3 3" />
+            <line x1="440" y1="80" x2={centerPos.x} y2={centerPos.y} stroke="rgba(255,255,255,0.14)" strokeWidth="1.5" strokeDasharray="3 3" />
+            <line x1="100" y1="300" x2={centerPos.x} y2={centerPos.y} stroke="rgba(255,255,255,0.14)" strokeWidth="1.5" strokeDasharray="3 3" />
+            <line x1="440" y1="300" x2={centerPos.x} y2={centerPos.y} stroke="rgba(255,255,255,0.14)" strokeWidth="1.5" strokeDasharray="3 3" />
 
             {/* ── Active Highlighted Signal Traces for Currently Selected Discipline ── */}
             {activeDiscipline === 'fullstack' && (
               <g className={`wb-active-signals ${pulseActive ? 'pulse-engaged' : ''}`}>
-                <line x1="100" y1="80" x2="440" y2="80" stroke="#ff6433" strokeWidth="2" strokeOpacity="0.8" />
-                <line x1="100" y1="80" x2="100" y2="300" stroke="#ff6433" strokeWidth="2" strokeOpacity="0.8" />
-                <line x1="100" y1="80" x2={centerPos.x} y2={centerPos.y} stroke="#ff6433" strokeWidth="2" strokeOpacity="0.9" />
+                <line x1="100" y1="80" x2="440" y2="80" stroke="#ff6433" strokeWidth="2" strokeOpacity="0.85" />
+                <line x1="100" y1="80" x2="100" y2="300" stroke="#ff6433" strokeWidth="2" strokeOpacity="0.85" />
+                <line x1="100" y1="80" x2={centerPos.x} y2={centerPos.y} stroke="#ff6433" strokeWidth="2" strokeOpacity="0.95" />
               </g>
             )}
 
             {activeDiscipline === 'infrastructure' && (
               <g className={`wb-active-signals ${pulseActive ? 'pulse-engaged' : ''}`}>
-                <line x1="440" y1="80" x2="100" y2="80" stroke="#087f73" strokeWidth="2" strokeOpacity="0.8" />
-                <line x1="440" y1="80" x2="440" y2="300" stroke="#087f73" strokeWidth="2" strokeOpacity="0.8" />
-                <line x1="440" y1="80" x2={centerPos.x} y2={centerPos.y} stroke="#087f73" strokeWidth="2" strokeOpacity="0.9" />
+                <line x1="440" y1="80" x2="100" y2="80" stroke="#087f73" strokeWidth="2" strokeOpacity="0.85" />
+                <line x1="440" y1="80" x2="440" y2="300" stroke="#087f73" strokeWidth="2" strokeOpacity="0.85" />
+                <line x1="440" y1="80" x2={centerPos.x} y2={centerPos.y} stroke="#087f73" strokeWidth="2" strokeOpacity="0.95" />
               </g>
             )}
 
             {activeDiscipline === 'cybersecurity' && (
               <g className={`wb-active-signals ${pulseActive ? 'pulse-engaged' : ''}`}>
-                <line x1="100" y1="300" x2="100" y2="80" stroke="#087f73" strokeWidth="2" strokeOpacity="0.8" />
-                <line x1="100" y1="300" x2="440" y2="300" stroke="#087f73" strokeWidth="2" strokeOpacity="0.8" />
-                <line x1="100" y1="300" x2={centerPos.x} y2={centerPos.y} stroke="#087f73" strokeWidth="2" strokeOpacity="0.9" />
+                <line x1="100" y1="300" x2="100" y2="80" stroke="#087f73" strokeWidth="2" strokeOpacity="0.85" />
+                <line x1="100" y1="300" x2="440" y2="300" stroke="#087f73" strokeWidth="2" strokeOpacity="0.85" />
+                <line x1="100" y1="300" x2={centerPos.x} y2={centerPos.y} stroke="#087f73" strokeWidth="2" strokeOpacity="0.95" />
               </g>
             )}
 
             {activeDiscipline === 'automation' && (
               <g className={`wb-active-signals ${pulseActive ? 'pulse-engaged' : ''}`}>
-                <line x1="440" y1="300" x2="440" y2="80" stroke="#ff6433" strokeWidth="2" strokeOpacity="0.8" />
-                <line x1="440" y1="300" x2="100" y2="300" stroke="#ff6433" strokeWidth="2" strokeOpacity="0.8" />
-                <line x1="440" y1="300" x2={centerPos.x} y2={centerPos.y} stroke="#ff6433" strokeWidth="2" strokeOpacity="0.9" />
+                <line x1="440" y1="300" x2="440" y2="80" stroke="#ff6433" strokeWidth="2" strokeOpacity="0.85" />
+                <line x1="440" y1="300" x2="100" y2="300" stroke="#ff6433" strokeWidth="2" strokeOpacity="0.85" />
+                <line x1="440" y1="300" x2={centerPos.x} y2={centerPos.y} stroke="#ff6433" strokeWidth="2" strokeOpacity="0.95" />
               </g>
             )}
 
             {/* ── Central Synthesis Core (Convergence Node) ── */}
             <g className="wb-synthesis-node" transform={`translate(${centerPos.x}, ${centerPos.y})`}>
-              <circle r="46" fill="#181b20" stroke="rgba(255,255,255,0.14)" strokeWidth="1.5" />
+              <circle r="46" fill="#181b20" stroke="rgba(255,255,255,0.16)" strokeWidth="1.5" />
               <circle r="38" fill="url(#wb-center-glow)" />
-              <circle r="38" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="4 4" />
+              <circle r="38" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1" strokeDasharray="4 4" />
               
               {/* Concentric core crosshairs */}
-              <line x1="-12" y1="0" x2="12" y2="0" stroke="rgba(255,255,255,0.4)" strokeWidth="1" />
-              <line x1="0" y1="-12" x2="0" y2="12" stroke="rgba(255,255,255,0.4)" strokeWidth="1" />
-              <circle r="4" fill="#fcfcfa" />
+              <line x1="-12" y1="0" x2="12" y2="0" stroke="rgba(255,255,255,0.5)" strokeWidth="1" />
+              <line x1="0" y1="-12" x2="0" y2="12" stroke="rgba(255,255,255,0.5)" strokeWidth="1" />
+              <circle r="4" fill="#ffffff" />
 
               <text
-                y="-15"
+                y="-14"
                 textAnchor="middle"
-                fill="#fcfcfa"
+                fill="#ffffff"
                 fontFamily="var(--font-mono, monospace)"
-                fontSize="8.5"
+                fontSize="10.5"
                 letterSpacing="1.8"
                 fontWeight="bold"
               >
@@ -448,10 +450,11 @@ export function EngineeringWorkbench() {
               <text
                 y="20"
                 textAnchor="middle"
-                fill="#94a3b8"
+                fill="#cbd5e1"
                 fontFamily="var(--font-mono, monospace)"
-                fontSize="7.5"
+                fontSize="9.5"
                 letterSpacing="0.8"
+                fontWeight="600"
               >
                 SECURE · SCALE · AUTOMATE
               </text>
@@ -483,7 +486,7 @@ export function EngineeringWorkbench() {
                       fill="none"
                       stroke={accentColor}
                       strokeWidth="1.5"
-                      strokeOpacity="0.35"
+                      strokeOpacity="0.4"
                     />
                   )}
 
@@ -492,9 +495,9 @@ export function EngineeringWorkbench() {
                     cx={x}
                     cy={y}
                     r="28"
-                    fill={isSelected ? '#1f2329' : '#181b20'}
-                    stroke={isSelected ? accentColor : 'rgba(255,255,255,0.18)'}
-                    strokeWidth={isSelected ? '2' : '1.2'}
+                    fill={isSelected ? '#20252e' : '#181b20'}
+                    stroke={isSelected ? accentColor : 'rgba(255,255,255,0.22)'}
+                    strokeWidth={isSelected ? '2.5' : '1.5'}
                   />
 
                   {/* Internal status ring */}
@@ -503,7 +506,7 @@ export function EngineeringWorkbench() {
                     cy={y}
                     r="18"
                     fill="none"
-                    stroke={isSelected ? accentColor : 'rgba(255,255,255,0.08)'}
+                    stroke={isSelected ? accentColor : 'rgba(255,255,255,0.1)'}
                     strokeWidth="1"
                     strokeDasharray={isSelected ? '2 2' : undefined}
                   />
@@ -511,26 +514,26 @@ export function EngineeringWorkbench() {
                   {/* Number identifier badge */}
                   <text
                     x={x}
-                    y={y + 4}
+                    y={y + 4.5}
                     textAnchor="middle"
-                    fill={isSelected ? '#fcfcfa' : '#94a3b8'}
+                    fill={isSelected ? '#ffffff' : '#cbd5e1'}
                     fontFamily="var(--font-mono, monospace)"
-                    fontSize="11"
+                    fontSize="12"
                     fontWeight="bold"
                   >
                     {item.number}
                   </text>
 
-                  {/* Node Label Annotation */}
+                  {/* Node Label Annotation - Enhanced Readability */}
                   <text
                     x={x}
                     y={y + (y < 200 ? -36 : 46)}
                     textAnchor="middle"
-                    fill={isSelected ? '#fcfcfa' : '#94a3b8'}
+                    fill={isSelected ? '#ffffff' : '#cbd5e1'}
                     fontFamily="var(--font-mono, monospace)"
-                    fontSize="10"
+                    fontSize="11"
                     letterSpacing="1"
-                    fontWeight={isSelected ? 'bold' : 'normal'}
+                    fontWeight={isSelected ? 'bold' : '600'}
                   >
                     {item.shortLabel.toUpperCase()}
                   </text>
@@ -541,9 +544,9 @@ export function EngineeringWorkbench() {
         </div>
       </div>
 
-      {/* ── Contextual Engineering Dossier Card ── */}
+      {/* ── Contextual Engineering Dossier Card (Fixed ARIA relationship) ── */}
       <div
-        id={`workbench-panel-${active.id}`}
+        id="workbench-panel"
         role="tabpanel"
         aria-labelledby={`workbench-tab-${active.id}`}
         className="wb-dossier-card"
@@ -608,4 +611,3 @@ export function EngineeringWorkbench() {
     </div>
   )
 }
-
