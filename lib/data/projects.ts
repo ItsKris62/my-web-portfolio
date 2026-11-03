@@ -40,8 +40,12 @@ export const projects: Project[] = [
       'Cloud deployment and operational monitoring',
     ],
     technologies: ['Next.js', 'TypeScript', 'PostgreSQL', 'AI workflows', 'Node.js'],
-    coverImage: '/og/SheriaBot AI User Dashboard.png',
+    coverImage: '/og/sheriabot_live.png',
     desktopScreenshots: [
+      {
+        src: '/og/sheriabot_live.png',
+        alt: 'SheriaBot — Live AI Regulatory Intelligence & Compliance Platform',
+      },
       {
         src: '/og/SheriaBot AI User Dashboard.png',
         alt: 'SheriaBot AI User Dashboard — Regulatory Intelligence & Compliance Platform',
@@ -106,7 +110,11 @@ export const projects: Project[] = [
     desktopScreenshots: [
       {
         src: '/og/adek_tatu_website.png',
-        alt: 'Adek Tatu — Modern Client Website & Brand Presentation',
+        alt: 'Adek Tatu — Live Community Website & Brand Platform',
+      },
+      {
+        src: '/og/adek_tatu_hero.jpg',
+        alt: 'Adek Tatu — Community Initiative & Public Welfare Platform',
       },
     ],
     mobileScreenshots: [],
@@ -218,7 +226,11 @@ export const projects: Project[] = [
     desktopScreenshots: [
       {
         src: '/og/rentworks_east_africa.png',
-        alt: 'RentWorks East Africa — Corporate Equipment Leasing & Asset Finance Website',
+        alt: 'RentWorks East Africa — Corporate Equipment Leasing & Asset Finance Live Platform',
+      },
+      {
+        src: '/og/rentworks_asset.jpg',
+        alt: 'RentWorks East Africa — Agricultural & Commercial Asset Leasing Solutions',
       },
     ],
     mobileScreenshots: [],
