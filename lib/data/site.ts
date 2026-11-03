@@ -4,11 +4,11 @@ export const siteConfig: SiteConfig = {
   name: 'Christopher Rateng',
   fullName: 'Christopher Modicai Rateng',
   tagline:
-    'I build, secure, automate, and support the technology businesses depend on.',
+    'I build modern web products, reliable systems, and practical automation.',
   secondaryTagline:
-    'From physical networks and enterprise cloud infrastructure to secure applications and intelligent automation, I turn complex technical challenges into dependable solutions.',
+    'From React and Next.js interfaces to Node.js APIs, PostgreSQL, cloud operations, and security, I help teams ship technology they can maintain.',
   positioning:
-    'Systems Infrastructure & Cloud Security Specialist | Software Developer | AI Automation Engineer | Independent ICT Consultant',
+    'Full-Stack React / Next.js Engineer | Cybersecurity & Infrastructure | AI Automation',
   siteUrl: 'https://crateng.co.ke',
   contact: {
     email: 'crateng13@gmail.com',

@@ -1093,6 +1093,12 @@ em,
     0 3px 5px rgba(24, 29, 33, 0.1),
     inset 0 1px 0 #fff,
     inset 0 -1px 0 rgba(117, 121, 119, 0.08);
+  /* Promote to isolated compositor layer for crisp text rasterisation */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 .badge-security-field {
@@ -3291,38 +3297,42 @@ em,
     line-height: 1.55;
   }
 
+  /* Scale and layout adjustments for mobile badge legibility */
   .access-badge-scene {
-    width: min(268px, calc(100vw - 3rem));
+    width: min(296px, calc(100vw - 2rem));
     margin-inline: auto;
   }
 
-  .badge-hardware-motion { width: 61px; }
+  .badge-hardware-motion { width: 64px; }
 
-  .badge-holder-shell { padding: 27px 9px 10px; }
+  .badge-holder-motion {
+    --badge-rx: 0.4deg;
+    --badge-ry: -1.2deg;
+    --badge-rz: -1.6deg;
+  }
 
-  .badge-card-insert { padding: 11px; }
+  .badge-holder-shell { padding: 26px 10px 10px; }
 
-  .badge-card-header { margin-bottom: 9px; padding-bottom: 7px; }
+  .badge-card-insert {
+    padding: 12px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: translateZ(0);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
 
-  .badge-brand-name { font-size: 11px; }
+  .badge-card-header { margin-bottom: 8px; padding-bottom: 6px; }
 
-  .badge-profile-label { font-size: 5.6px; }
+  .badge-portrait-well { aspect-ratio: 1.15 / 1; }
 
-  .badge-identity { padding: 11px 1px 9px; }
+  .badge-identity { padding: 10px 1px 8px; }
 
-  .badge-identity h2 { font-size: 1.24rem; }
+  .badge-identity h2 { font-size: 1.32rem; }
 
-  .badge-disciplines { font-size: 6.5px; }
+  .badge-card-footer { gap: 8px; padding-top: 8px; }
 
-  .badge-role { font-size: 9.5px; }
-
-  .badge-card-footer { gap: 7px; padding-top: 8px; }
-
-  .badge-availability strong { font-size: 7.1px; }
-
-  .badge-availability span { font-size: 5.2px; }
-
-  .badge-qr-link img { width: 38px; height: 38px; }
+  .badge-qr-link img { width: 40px; height: 40px; }
 
   .badge-qr-link span { display: none; }
 
@@ -3356,11 +3366,21 @@ em,
 
   .menu-button { flex: 0 0 auto; padding: 0.3rem; }
 
-  .access-badge-scene { width: min(238px, calc(100vw - 3.5rem)); }
+  .access-badge-scene {
+    width: min(276px, calc(100vw - 1.25rem));
+  }
 
-  .badge-identity h2 { font-size: 1.12rem; }
+  .badge-holder-motion {
+    --badge-rx: 0.2deg;
+    --badge-ry: -0.8deg;
+    --badge-rz: -1.2deg;
+  }
 
-  .badge-role { font-size: 8.8px; }
+  .badge-holder-shell { padding: 24px 9px 9px; }
+
+  .badge-card-insert { padding: 11px; }
+
+  .badge-identity h2 { font-size: 1.22rem; }
 }
 
 /* ── Reduced Motion ───────────────────────────────────────── */
@@ -3826,6 +3846,15 @@ em,
 }
 
 /* Varied Architectural Bento Grid Layout Hierarchy */
+.bento-card-adek-tatu,
+.bento-card-kolwa-beba-sacco {
+  grid-column: span 6;
+}
+
+.bento-card-rentworks-east-africa {
+  grid-column: span 5;
+}
+
 .bento-card-enterprise-network-deployment {
   grid-column: span 7;
 }
@@ -3835,12 +3864,30 @@ em,
 }
 
 .bento-card-automation-workflow-engineering {
-  grid-column: span 12;
+  grid-column: span 7;
 }
 
-.bento-card-adek-tatu,
-.bento-card-kolwa-beba-sacco {
-  grid-column: span 6;
+.bento-card-media .tech-diagram-wrap,
+.bento-diagram {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  display: block;
+}
+
+.bento-fallback-visual {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .bento-card-media {
@@ -4419,6 +4466,12 @@ em,
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.career-node-btn:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 4px;
+  border-radius: var(--radius-xs);
 }
 
 .node-marker-wrap {
@@ -5862,6 +5915,7 @@ em,
 
   .bento-card-adek-tatu,
   .bento-card-kolwa-beba-sacco,
+  .bento-card-rentworks-east-africa,
   .bento-card-enterprise-network-deployment,
   .bento-card-cybersecurity-monitoring-lab,
   .bento-card-automation-workflow-engineering {
@@ -5891,6 +5945,7 @@ em,
 @media (max-width: 768px) {
   .bento-card-adek-tatu,
   .bento-card-kolwa-beba-sacco,
+  .bento-card-rentworks-east-africa,
   .bento-card-enterprise-network-deployment,
   .bento-card-cybersecurity-monitoring-lab,
   .bento-card-automation-workflow-engineering {

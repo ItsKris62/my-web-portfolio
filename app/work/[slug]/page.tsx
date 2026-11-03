@@ -8,6 +8,7 @@ import {
   NetworkDeploymentDiagram,
   CybersecurityLabDiagram,
   AutomationWorkflowDiagram,
+  RentWorksDiagram,
 } from '@/components/technical-diagrams'
 
 interface ProjectPageProps {
@@ -127,12 +128,17 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           url: siteUrl,
         },
         keywords: project.technologies.join(', '),
-        datePublished: `${project.year}-01-01`,
       },
     ],
   }
 
   const isFlagship = project.slug === 'sheriabot'
+  const hasTechnicalDiagram = [
+    'rentworks-east-africa',
+    'enterprise-network-deployment',
+    'cybersecurity-monitoring-lab',
+    'automation-workflow-engineering',
+  ].includes(project.slug)
 
   return (
     <div className="site-shell project-detail">
@@ -205,6 +211,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </div>
           )}
 
+          {project.problem && (
+            <div className="case-section">
+              <h2>The Problem</h2>
+              <p>{project.problem}</p>
+            </div>
+          )}
+
           {project.objectives && project.objectives.length > 0 && (
             <div className="case-section">
               <h2>Key Objectives</h2>
@@ -240,6 +253,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </div>
           )}
 
+          {project.technicalApproach && (
+            <div className="case-section">
+              <h2>Technical Approach</h2>
+              <p>{project.technicalApproach}</p>
+            </div>
+          )}
+
           {project.implementationHighlights && project.implementationHighlights.length > 0 && (
             <div className="case-section">
               <h2>Implementation Highlights</h2>
@@ -267,44 +287,50 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </div>
           )}
 
-          {/* Visual Showcase: Real Screenshots OR Authentic Technical Diagrams */}
-          <div className="case-section">
-            <h2>Visual Showcase &amp; Architecture</h2>
-            {project.desktopScreenshots && project.desktopScreenshots.length > 0 ? (
-              <div className="screenshot-gallery">
-                {project.desktopScreenshots.map((s, i) => (
-                  <figure key={i} className="screenshot-frame">
-                    <Image
-                      src={s.src}
-                      alt={s.alt}
-                      width={1200}
-                      height={750}
-                      sizes="(max-width: 860px) 100vw, 820px"
-                      style={{ width: '100%', height: 'auto', display: 'block' }}
-                      priority={i === 0}
-                    />
-                    <figcaption className="screenshot-caption">{s.alt}</figcaption>
-                  </figure>
-                ))}
-              </div>
-            ) : (
-              <div className="case-diagram-container">
-                {project.slug === 'enterprise-network-deployment' && <NetworkDeploymentDiagram />}
-                {project.slug === 'cybersecurity-monitoring-lab' && <CybersecurityLabDiagram />}
-                {project.slug === 'automation-workflow-engineering' && <AutomationWorkflowDiagram />}
-                <p className="case-diagram-note">
-                  <em>
-                    Technical architecture illustration for non-graphical infrastructure/security work. Clearly labeled
-                    conceptual topology.
-                  </em>
-                </p>
-              </div>
-            )}
-          </div>
+          {/* Visual Showcase: Primary Real Screenshots and Supporting Technical Diagrams */}
+          {(Boolean(project.desktopScreenshots?.length) || hasTechnicalDiagram) && (
+            <div className="case-section">
+              <h2>Visual Showcase &amp; Architecture</h2>
+              {project.desktopScreenshots && project.desktopScreenshots.length > 0 && (
+                <div className="screenshot-gallery">
+                  {project.desktopScreenshots.map((s, i) => (
+                    <figure key={i} className="screenshot-frame">
+                      <Image
+                        src={s.src}
+                        alt={s.alt}
+                        width={1200}
+                        height={750}
+                        sizes="(max-width: 860px) 100vw, 820px"
+                        style={{ width: '100%', height: 'auto', display: 'block' }}
+                        priority={i === 0}
+                      />
+                      <figcaption className="screenshot-caption">{s.alt}</figcaption>
+                    </figure>
+                  ))}
+                </div>
+              )}
+
+              {hasTechnicalDiagram && (
+                <div className={`case-diagram-container${project.desktopScreenshots?.length ? ' mt-8' : ''}`}>
+                  {project.slug === 'rentworks-east-africa' && <RentWorksDiagram />}
+                  {project.slug === 'enterprise-network-deployment' && <NetworkDeploymentDiagram />}
+                  {project.slug === 'cybersecurity-monitoring-lab' && <CybersecurityLabDiagram />}
+                  {project.slug === 'automation-workflow-engineering' && <AutomationWorkflowDiagram />}
+                  <p className="case-diagram-note">
+                    <em>
+                      {project.slug === 'rentworks-east-africa'
+                        ? 'Supporting architecture & SEO structure diagram: mapping client leasing services to discovery and enquiry funnels.'
+                        : 'Technical architecture illustration for non-graphical infrastructure/security work. Clearly labeled conceptual topology.'}
+                    </em>
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           {project.outcomes && project.outcomes.length > 0 && (
             <div className="case-section">
-              <h2>Verified Outcomes &amp; Impact</h2>
+              <h2>Selected Deliverables &amp; Outcomes</h2>
               <ul className="case-bullet-list">
                 {project.outcomes.map((o, i) => (
                   <li key={i}>

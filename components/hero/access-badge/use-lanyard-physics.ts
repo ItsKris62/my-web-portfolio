@@ -12,6 +12,18 @@ const RESTING_HOLDER_POSE = {
   lightY: 20,
 } as const
 
+// ── Gyroscope / device motion constants ────────────────────
+/** Max tilt angle in degrees mapped to ±1 normalised coordinate */
+const GYRO_TILT_RANGE = 25
+/** Subtle gyro influence factor (0–1 scale; keeps movement natural and restrained) */
+const GYRO_INFLUENCE = 0.42
+/** Acceleration threshold to register a deliberate phone shake (m/s²) */
+const SHAKE_THRESHOLD = 19
+/** Minimum cooldown between shake impulses in milliseconds */
+const SHAKE_COOLDOWN_MS = 800
+/** Subtle impulse delivered on shake */
+const SHAKE_IMPULSE = 1.8
+
 interface SpringValue {
   value: number
   velocity: number
@@ -135,6 +147,12 @@ export function useLanyardPhysics({ disabled = false, onFrame }: UseLanyardPhysi
   const lastTimeRef = useRef<number | null>(null)
   const onFrameRef = useRef(onFrame)
 
+  // Gyroscope tracking refs
+  const pointerActiveRef = useRef(false)
+  const lastShakeRef = useRef(0)
+  const smoothGyroRef = useRef({ x: 0, y: 0 })
+  const orientationAttachedRef = useRef(false)
+
   useEffect(() => {
     onFrameRef.current = onFrame
   }, [onFrame])
@@ -154,39 +172,41 @@ export function useLanyardPhysics({ disabled = false, onFrame }: UseLanyardPhysi
 
     const state = stateRef.current
     const pointer = targetRef.current
+
+    // Subtle, realistic swing multipliers
     const strapTarget = {
-      x: pointer.x * 10 * pointer.strapInfluence,
-      rotateZ: pointer.x * 3.4 * pointer.strapInfluence,
-      lightPosition: (pointer.y * 4.5 + pointer.x * 1.5) * pointer.strapInfluence,
+      x: pointer.x * 6.5 * pointer.strapInfluence,
+      rotateZ: pointer.x * 2.3 * pointer.strapInfluence,
+      lightPosition: (pointer.y * 3.2 + pointer.x * 1.2) * pointer.strapInfluence,
     }
 
-    integrateSpring(state.strapX, strapTarget.x, deltaTime, 215, 25)
-    integrateSpring(state.strapRotateZ, strapTarget.rotateZ, deltaTime, 205, 24)
-    integrateSpring(state.strapLightPosition, strapTarget.lightPosition, deltaTime, 235, 27)
+    integrateSpring(state.strapX, strapTarget.x, deltaTime, 215, 27)
+    integrateSpring(state.strapRotateZ, strapTarget.rotateZ, deltaTime, 205, 26)
+    integrateSpring(state.strapLightPosition, strapTarget.lightPosition, deltaTime, 235, 28)
 
     const hardwareTarget = {
-      x: state.strapX.value * 0.78,
-      rotateY: pointer.x * 2.3,
-      rotateZ: state.strapRotateZ.value * 0.82,
+      x: state.strapX.value * 0.74,
+      rotateY: pointer.x * 1.7,
+      rotateZ: state.strapRotateZ.value * 0.78,
     }
-    integrateSpring(state.hardwareX, hardwareTarget.x, deltaTime, 150, 21)
-    integrateSpring(state.hardwareRotateY, hardwareTarget.rotateY, deltaTime, 145, 20)
-    integrateSpring(state.hardwareRotateZ, hardwareTarget.rotateZ, deltaTime, 145, 20)
+    integrateSpring(state.hardwareX, hardwareTarget.x, deltaTime, 150, 22)
+    integrateSpring(state.hardwareRotateY, hardwareTarget.rotateY, deltaTime, 145, 21)
+    integrateSpring(state.hardwareRotateZ, hardwareTarget.rotateZ, deltaTime, 145, 21)
 
     const holderTarget = {
-      x: state.hardwareX.value * 0.92,
-      rotateX: RESTING_HOLDER_POSE.rotateX - pointer.y * 2.7,
-      rotateY: RESTING_HOLDER_POSE.rotateY + pointer.x * 3.6 + state.hardwareRotateY.value * 0.22,
-      rotateZ: RESTING_HOLDER_POSE.rotateZ + state.hardwareRotateZ.value * 0.94,
-      lightX: RESTING_HOLDER_POSE.lightX + pointer.x * 18,
-      lightY: RESTING_HOLDER_POSE.lightY + pointer.y * 12,
+      x: state.hardwareX.value * 0.90,
+      rotateX: RESTING_HOLDER_POSE.rotateX - pointer.y * 2.1,
+      rotateY: RESTING_HOLDER_POSE.rotateY + pointer.x * 2.8 + state.hardwareRotateY.value * 0.19,
+      rotateZ: RESTING_HOLDER_POSE.rotateZ + state.hardwareRotateZ.value * 0.86,
+      lightX: RESTING_HOLDER_POSE.lightX + pointer.x * 15,
+      lightY: RESTING_HOLDER_POSE.lightY + pointer.y * 10,
     }
-    integrateSpring(state.holderX, holderTarget.x, deltaTime, 112, 18)
-    integrateSpring(state.holderRotateX, holderTarget.rotateX, deltaTime, 108, 18)
-    integrateSpring(state.holderRotateY, holderTarget.rotateY, deltaTime, 106, 18)
-    integrateSpring(state.holderRotateZ, holderTarget.rotateZ, deltaTime, 104, 17.5)
-    integrateSpring(state.holderLightX, holderTarget.lightX, deltaTime, 125, 20)
-    integrateSpring(state.holderLightY, holderTarget.lightY, deltaTime, 125, 20)
+    integrateSpring(state.holderX, holderTarget.x, deltaTime, 114, 19)
+    integrateSpring(state.holderRotateX, holderTarget.rotateX, deltaTime, 110, 19)
+    integrateSpring(state.holderRotateY, holderTarget.rotateY, deltaTime, 108, 19)
+    integrateSpring(state.holderRotateZ, holderTarget.rotateZ, deltaTime, 105, 18.5)
+    integrateSpring(state.holderLightX, holderTarget.lightX, deltaTime, 125, 21)
+    integrateSpring(state.holderLightY, holderTarget.lightY, deltaTime, 125, 21)
 
     onFrameRef.current(toFrame(state))
 
@@ -232,30 +252,138 @@ export function useLanyardPhysics({ disabled = false, onFrame }: UseLanyardPhysi
     if (disabled) return
 
     const state = stateRef.current
-    const xVelocity = clamp(velocityX, -4, 4)
-    const yVelocity = clamp(velocityY, -4, 4)
-    state.strapX.velocity += xVelocity * 8
-    state.strapRotateZ.velocity += xVelocity * 3.2
-    state.strapLightPosition.velocity += (yVelocity * 4 + xVelocity) * 0.8
-    state.hardwareX.velocity += xVelocity * 5
-    state.hardwareRotateY.velocity += xVelocity * 1.6
-    state.hardwareRotateZ.velocity += xVelocity * 2.3
-    state.holderX.velocity += xVelocity * 3.5
-    state.holderRotateX.velocity -= yVelocity * 2
-    state.holderRotateY.velocity += xVelocity * 2.6
-    state.holderRotateZ.velocity += xVelocity * 2.8
+    // Clamped release impulse for natural settling
+    const xVelocity = clamp(velocityX, -3, 3)
+    const yVelocity = clamp(velocityY, -3, 3)
+    state.strapX.velocity += xVelocity * 5.2
+    state.strapRotateZ.velocity += xVelocity * 2.2
+    state.strapLightPosition.velocity += (yVelocity * 3 + xVelocity) * 0.65
+    state.hardwareX.velocity += xVelocity * 3.4
+    state.hardwareRotateY.velocity += xVelocity * 1.2
+    state.hardwareRotateZ.velocity += xVelocity * 1.6
+    state.holderX.velocity += xVelocity * 2.4
+    state.holderRotateX.velocity -= yVelocity * 1.5
+    state.holderRotateY.velocity += xVelocity * 1.8
+    state.holderRotateZ.velocity += xVelocity * 1.9
     start()
   }, [disabled, start])
 
+  // Orientation listener implementation
+  const handleOrientation = useCallback((event: DeviceOrientationEvent) => {
+    // If user is actively touching or dragging, prioritize touch
+    if (pointerActiveRef.current) return
+
+    const gamma = event.gamma ?? 0 // Left/right tilt in degrees [-90, 90]
+    const beta = event.beta ?? 0   // Front/back tilt in degrees [-180, 180]
+
+    // Normalise tilt values (45° is typical phone hold elevation angle)
+    const nx = clamp(gamma / GYRO_TILT_RANGE, -1, 1)
+    const ny = clamp((beta - 45) / GYRO_TILT_RANGE, -1, 1)
+
+    // Smooth low-pass filter to reject noisy IMU jitter
+    smoothGyroRef.current.x += (nx - smoothGyroRef.current.x) * 0.12
+    smoothGyroRef.current.y += (ny - smoothGyroRef.current.y) * 0.12
+
+    setPointerTarget(
+      smoothGyroRef.current.x * GYRO_INFLUENCE,
+      smoothGyroRef.current.y * GYRO_INFLUENCE,
+      0.55,
+    )
+  }, [setPointerTarget])
+
+  // Safe user gesture handler for iOS 13+ permission requests
+  const requestOrientationPermission = useCallback(async () => {
+    if (disabled || typeof window === 'undefined' || window.isSecureContext === false) return
+    if (!('DeviceOrientationEvent' in window)) return
+
+    const DOE = window.DeviceOrientationEvent as unknown as {
+      requestPermission?: () => Promise<string>
+    }
+    if (typeof DOE.requestPermission === 'function' && !orientationAttachedRef.current) {
+      try {
+        const response = await DOE.requestPermission()
+        if (response === 'granted' && !orientationAttachedRef.current) {
+          window.addEventListener('deviceorientation', handleOrientation, { passive: true })
+          orientationAttachedRef.current = true
+        }
+      } catch {
+        // User dismissed, denied, or device lacks sensors; gracefully continue
+      }
+    }
+  }, [disabled, handleOrientation])
+
+  // Gyroscope registration effect (standard devices without explicit prompt)
+  useEffect(() => {
+    if (disabled || typeof window === 'undefined' || window.isSecureContext === false) return
+    if (!('DeviceOrientationEvent' in window)) return
+
+    const isTouchDevice = 'ontouchstart' in window || (navigator.maxTouchPoints ?? 0) > 0
+    if (!isTouchDevice) return
+
+    const DOE = window.DeviceOrientationEvent as unknown as {
+      requestPermission?: () => Promise<string>
+    }
+
+    // On standard Android / non-permission platforms, attach directly
+    if (typeof DOE.requestPermission !== 'function' && !orientationAttachedRef.current) {
+      window.addEventListener('deviceorientation', handleOrientation, { passive: true })
+      orientationAttachedRef.current = true
+    }
+
+    return () => {
+      window.removeEventListener('deviceorientation', handleOrientation)
+      orientationAttachedRef.current = false
+    }
+  }, [disabled, handleOrientation])
+
+  // Device motion shake detection effect
+  useEffect(() => {
+    if (disabled || typeof window === 'undefined' || window.isSecureContext === false) return
+    if (!('DeviceMotionEvent' in window)) return
+
+    const isTouchDevice = 'ontouchstart' in window || (navigator.maxTouchPoints ?? 0) > 0
+    if (!isTouchDevice) return
+
+    const handleMotion = (event: DeviceMotionEvent) => {
+      if (pointerActiveRef.current) return
+
+      const accel = event.accelerationIncludingGravity
+      if (!accel) return
+
+      const ax = accel.x ?? 0
+      const ay = accel.y ?? 0
+      const az = accel.z ?? 0
+      const magnitude = Math.sqrt(ax * ax + ay * ay + az * az)
+
+      if (magnitude > SHAKE_THRESHOLD) {
+        const now = Date.now()
+        if (now - lastShakeRef.current > SHAKE_COOLDOWN_MS) {
+          lastShakeRef.current = now
+          const kickDirection = (ax > 0 ? -1 : 1)
+          release(kickDirection * SHAKE_IMPULSE, -0.4)
+        }
+      }
+    }
+
+    window.addEventListener('devicemotion', handleMotion, { passive: true })
+    return () => {
+      window.removeEventListener('devicemotion', handleMotion)
+    }
+  }, [disabled, release])
+
   useEffect(() => {
     if (!disabled) return
+    if (orientationAttachedRef.current && typeof window !== 'undefined') {
+      window.removeEventListener('deviceorientation', handleOrientation)
+      orientationAttachedRef.current = false
+    }
     stop()
     targetRef.current = { x: 0, y: 0, strapInfluence: 1 }
     stateRef.current = createRestingState()
     onFrameRef.current(toFrame(stateRef.current))
-  }, [disabled, stop])
+  }, [disabled, handleOrientation, stop])
 
   useEffect(() => stop, [stop])
 
-  return { release, setPointerTarget }
+  return { release, setPointerTarget, pointerActiveRef, requestOrientationPermission }
 }

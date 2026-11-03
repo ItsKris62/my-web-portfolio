@@ -23,9 +23,8 @@ export function AboutSection() {
 
           <div className="about-paragraphs">
             <p>
-              I&apos;m <strong>Christopher Modicai Rateng</strong> — a systems infrastructure &amp; cloud security
-              specialist, software developer, AI automation engineer, independent ICT consultant, and founder of
-              SheriaBot.
+              I&apos;m <strong>Christopher Modicai Rateng</strong> — a full-stack React/Next.js engineer,
+              infrastructure and cybersecurity practitioner, AI automation builder, and founder of SheriaBot.
             </p>
             <p>
               My background started in supporting real business systems — networks, endpoints, servers, users, and

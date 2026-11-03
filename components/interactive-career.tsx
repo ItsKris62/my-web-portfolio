@@ -27,21 +27,39 @@ const narrativePhases = [
 
 export function InteractiveCareer() {
   const [selectedIndex, setSelectedIndex] = useState<number>(career.length - 1)
-  const [isAutoScrolling, setIsAutoScrolling] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
+  const hasManuallySelectedRef = useRef(false)
+  const tabButtonRefs = useRef<(HTMLButtonElement | null)[]>([])
 
   const activeMilestone: CareerMilestone = career[selectedIndex] ?? career[0]
   const linkedProject = activeMilestone?.organization ? milestoneProjectMap[activeMilestone.organization] : undefined
   const activePhase = narrativePhases[selectedIndex] || narrativePhases[narrativePhases.length - 1]
 
-  // Track scroll position to synchronize active milestone while allowing manual override
+  // Track scroll position to synchronize active milestone, but protect manual user selection and focus
   useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let isReduced = mediaQuery.matches
+
+    const syncReducedMotion = () => {
+      isReduced = mediaQuery.matches
+    }
+    mediaQuery.addEventListener('change', syncReducedMotion)
+
     let ticking = false
     const handleScroll = () => {
-      if (isAutoScrolling) return
+      if (isReduced) return
       if (!ticking) {
         window.requestAnimationFrame(() => {
           if (sectionRef.current) {
+            // Focus protection: if user manually selected or has active keyboard/interaction focus in career section, do NOT hijack
+            if (
+              hasManuallySelectedRef.current ||
+              (typeof document !== 'undefined' && sectionRef.current.contains(document.activeElement))
+            ) {
+              ticking = false
+              return
+            }
+
             const rect = sectionRef.current.getBoundingClientRect()
             const sectionHeight = rect.height
             // Only update if section is actively occupying middle of viewport
@@ -51,7 +69,6 @@ export function InteractiveCareer() {
                 Math.max(0, (window.innerHeight * 0.4 - rect.top) / (sectionHeight * 0.7))
               )
               const computedIndex = Math.min(career.length - 1, Math.floor(progress * career.length))
-              // Only advance forward or backward if difference exists
               if (computedIndex !== selectedIndex && Math.abs(computedIndex - selectedIndex) <= 1) {
                 setSelectedIndex(computedIndex)
               }
@@ -64,13 +81,39 @@ export function InteractiveCareer() {
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [selectedIndex, isAutoScrolling])
+    return () => {
+      mediaQuery.removeEventListener('change', syncReducedMotion)
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [selectedIndex])
 
   const handleManualSelect = (index: number) => {
-    setIsAutoScrolling(true)
+    hasManuallySelectedRef.current = true
     setSelectedIndex(index)
-    setTimeout(() => setIsAutoScrolling(false), 800)
+  }
+
+  // W3C ARIA Tablist keyboard navigation: Left/Right/Up/Down/Home/End
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    let nextIndex: number | null = null
+
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault()
+      nextIndex = (index + 1) % career.length
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault()
+      nextIndex = (index - 1 + career.length) % career.length
+    } else if (e.key === 'Home') {
+      e.preventDefault()
+      nextIndex = 0
+    } else if (e.key === 'End') {
+      e.preventDefault()
+      nextIndex = career.length - 1
+    }
+
+    if (nextIndex !== null) {
+      handleManualSelect(nextIndex)
+      tabButtonRefs.current[nextIndex]?.focus()
+    }
   }
 
   const progressPercentage = ((selectedIndex) / (career.length - 1)) * 100
@@ -125,7 +168,7 @@ export function InteractiveCareer() {
       </div>
 
       {/* Connected Geometric Node Selector with Active SVG Connector Bus */}
-      <div className="career-node-track" role="tablist" aria-label="Career milestones timeline">
+      <div className="career-node-track">
         <div className="career-node-line" aria-hidden="true">
           <div
             className="career-node-line-progress"
@@ -133,18 +176,26 @@ export function InteractiveCareer() {
           />
         </div>
 
-        <div className="career-nodes-container">
+        <div className="career-nodes-container" role="tablist" aria-label="Career milestones timeline">
           {career.map((milestone, index) => {
             const isSelected = index === selectedIndex
             return (
               <button
                 key={milestone.period + milestone.organization}
+                ref={(el) => {
+                  tabButtonRefs.current[index] = el
+                }}
                 role="tab"
                 id={`career-node-${index}`}
                 aria-selected={isSelected}
                 aria-controls="career-detail-panel"
+                tabIndex={isSelected ? 0 : -1}
                 className={`career-node-btn${isSelected ? ' active' : ''}`}
                 onClick={() => handleManualSelect(index)}
+                onFocus={() => {
+                  hasManuallySelectedRef.current = true
+                }}
+                onKeyDown={(e) => handleKeyDown(e, index)}
               >
                 <div className="node-marker-wrap">
                   <span className="node-pulse" aria-hidden="true" />

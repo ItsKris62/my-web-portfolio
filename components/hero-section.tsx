@@ -18,30 +18,66 @@ export function HeroSection() {
   const badgeLayerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let isReduced = mediaQuery.matches
     let ticking = false
     let frameId: number | null = null
 
+    const clearTransforms = () => {
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId)
+        frameId = null
+      }
+      ticking = false
+      if (backgroundRef.current) backgroundRef.current.style.transform = ''
+      if (signalBusRef.current) signalBusRef.current.style.transform = ''
+      if (badgeLayerRef.current) badgeLayerRef.current.style.transform = ''
+    }
+
+    const applyParallax = () => {
+      if (isReduced) return
+      if (heroRef.current) {
+        const rect = heroRef.current.getBoundingClientRect()
+        if (rect.bottom > 0) {
+          const scrollY = window.scrollY
+          if (backgroundRef.current) backgroundRef.current.style.transform = `translateY(${Math.round(scrollY * 0.12)}px)`
+          if (signalBusRef.current) signalBusRef.current.style.transform = `translateY(${Math.round(scrollY * 0.25)}px)`
+          if (badgeLayerRef.current) badgeLayerRef.current.style.transform = `translateY(${Math.round(scrollY * 0.05)}px)`
+        }
+      }
+    }
+
     const handleScroll = () => {
+      if (isReduced) return
       if (!ticking) {
         frameId = window.requestAnimationFrame(() => {
-          if (heroRef.current) {
-            const rect = heroRef.current.getBoundingClientRect()
-            if (rect.bottom > 0) {
-              const scrollY = window.scrollY
-              if (backgroundRef.current) backgroundRef.current.style.transform = `translateY(${Math.round(scrollY * 0.12)}px)`
-              if (signalBusRef.current) signalBusRef.current.style.transform = `translateY(${Math.round(scrollY * 0.25)}px)`
-              if (badgeLayerRef.current) badgeLayerRef.current.style.transform = `translateY(${Math.round(scrollY * 0.05)}px)`
-            }
-          }
+          applyParallax()
           ticking = false
         })
         ticking = true
       }
     }
 
+    const syncReducedMotion = () => {
+      isReduced = mediaQuery.matches
+      if (isReduced) {
+        clearTransforms()
+      } else {
+        applyParallax()
+      }
+    }
+
+    mediaQuery.addEventListener('change', syncReducedMotion)
     window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll()
+
+    if (isReduced) {
+      clearTransforms()
+    } else {
+      handleScroll()
+    }
+
     return () => {
+      mediaQuery.removeEventListener('change', syncReducedMotion)
       window.removeEventListener('scroll', handleScroll)
       if (frameId !== null) window.cancelAnimationFrame(frameId)
     }
@@ -171,11 +207,11 @@ export function HeroSection() {
         </p>
 
         <h1 id="hero-headline" className="hero-title-animate">
-          I build, secure, automate
+          I build software,
           <br />
-          <em>&amp; maintain</em>
+          <em>secure systems</em>
           <br />
-          technology.
+          &amp; useful automation.
         </h1>
 
         <p className="hero-lede hero-lede-animate">
@@ -188,7 +224,7 @@ export function HeroSection() {
             <ArrowDownRight aria-hidden="true" className="w-4 h-4 arrow-shift" />
           </a>
           <a id="hero-cta-consult" className="text-link hero-link-interactive" href="#contact">
-            <span>Request an ICT consultation</span>
+            <span>Discuss a project</span>
             <ArrowUpRight aria-hidden="true" className="w-4 h-4 arrow-shift" />
           </a>
         </div>
@@ -207,13 +243,13 @@ export function HeroSection() {
 
       <div className="hero-meta hero-meta-animate" aria-label="Core focus areas and physical base">
         <span className="meta-pill">
+          <SoftwareIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--ink)]" /> Full-Stack Development
+        </span>
+        <span className="meta-pill">
           <CybersecurityIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--orange)]" /> Cybersecurity
         </span>
         <span className="meta-pill">
           <InfrastructureIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--teal)]" /> Infrastructure
-        </span>
-        <span className="meta-pill">
-          <SoftwareIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--ink)]" /> Software Development
         </span>
         <span className="meta-pill">
           <AutomationIcon className="w-3.5 h-3.5 inline mr-1 text-[var(--orange)]" /> AI Automation

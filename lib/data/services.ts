@@ -2,8 +2,55 @@ import type { Service } from './types'
 
 export const services: Service[] = [
   {
-    id: 'cloud-identity-m365',
+    id: 'web-design-development',
     number: '01',
+    title: 'Full-Stack Web Applications & Websites',
+    headline: 'From polished interfaces to dependable APIs.',
+    description:
+      'React and Next.js websites, business applications, Node.js API integrations, and ongoing website improvements built for usability, performance, and maintainability.',
+    target:
+      'Small businesses, startups, SACCOs, professionals, NGOs, creative businesses, and agencies.',
+    deliverables: [
+      'Business website design',
+      'Corporate websites',
+      'Personal portfolios',
+      'Product landing pages',
+      'Responsive web interfaces',
+      'Website redesign',
+      'UI/UX improvements',
+      'Frontend development',
+      'Backend API integration',
+      'Database-driven web applications',
+      'Website deployment',
+      'DNS and hosting configuration',
+      'Website maintenance',
+      'Basic technical SEO implementation',
+      'Performance and accessibility optimisation',
+    ],
+    technologies: [
+      'Next.js',
+      'TypeScript',
+      'Tailwind CSS',
+      'React',
+      'Node.js',
+      'PostgreSQL',
+      'Vercel',
+    ],
+    engagementTypes: [
+      'Project-based build',
+      'Website redesign',
+      'Maintenance retainer',
+      'Performance audit',
+    ],
+    clientBenefit:
+      'A professional web presence or application that is accessible, maintainable, and ready to support business workflows.',
+    cta: 'Discuss a Website Project',
+    icon: 'software',
+    tone: 'light',
+  },
+  {
+    id: 'cloud-identity-m365',
+    number: '02',
     title: 'Cloud Identity & Microsoft 365 Security',
     headline: 'Secure identities. Simpler administration.',
     description:
@@ -50,7 +97,7 @@ export const services: Service[] = [
   },
   {
     id: 'sme-cybersecurity-grc',
-    number: '02',
+    number: '03',
     title: 'SME Cybersecurity & GRC Readiness',
     headline: 'Practical security for real business risks.',
     description:
@@ -96,7 +143,7 @@ export const services: Service[] = [
   },
   {
     id: 'network-infrastructure',
-    number: '03',
+    number: '04',
     title: 'Network Infrastructure & Field Engineering',
     headline: 'Reliable connectivity, from the rack to the cloud.',
     description:
@@ -150,7 +197,7 @@ export const services: Service[] = [
   },
   {
     id: 'managed-it-operations',
-    number: '04',
+    number: '05',
     title: 'Managed IT Operations & Technical Support',
     headline: 'Expert technical support without unnecessary overhead.',
     description:
@@ -195,53 +242,6 @@ export const services: Service[] = [
       'Dependable technical support and maintenance without unnecessary operational disruption.',
     cta: 'Request Managed IT Support',
     icon: 'terminal',
-    tone: 'light',
-  },
-  {
-    id: 'web-design-development',
-    number: '05',
-    title: 'Web Design, Development & Digital Experiences',
-    headline: 'Professional websites that communicate clearly.',
-    description:
-      'Business websites, corporate sites, portfolios, landing pages and web applications designed to communicate clearly, perform reliably and work across devices.',
-    target:
-      'Small businesses, startups, SACCOs, professionals, NGOs, creative businesses, and agencies.',
-    deliverables: [
-      'Business website design',
-      'Corporate websites',
-      'Personal portfolios',
-      'Product landing pages',
-      'Responsive web interfaces',
-      'Website redesign',
-      'UI/UX improvements',
-      'Frontend development',
-      'Backend API integration',
-      'Database-driven web applications',
-      'Website deployment',
-      'DNS and hosting configuration',
-      'Website maintenance',
-      'Basic technical SEO implementation',
-      'Performance and accessibility optimisation',
-    ],
-    technologies: [
-      'Next.js',
-      'TypeScript',
-      'Tailwind CSS',
-      'React',
-      'Node.js',
-      'PostgreSQL',
-      'Vercel',
-    ],
-    engagementTypes: [
-      'Project-based build',
-      'Website redesign',
-      'Maintenance retainer',
-      'Performance audit',
-    ],
-    clientBenefit:
-      'Professional, responsive websites and applications that help organisations build credibility and communicate clearly.',
-    cta: 'Discuss a Website Project',
-    icon: 'software',
     tone: 'light',
   },
   {
@@ -342,9 +342,9 @@ export const services: Service[] = [
 ]
 
 export const webDevOffering = {
-  title: 'Web Design, Development & Technical Implementation',
+  title: 'Full-Stack Web Development & Digital Experiences',
   description:
-    'Professional, responsive websites and modern web applications designed to communicate clearly, perform reliably and work across devices.',
+    'Modern React and Next.js interfaces, API-connected applications, and practical website development and maintenance for organisations that need reliable digital experiences.',
   services: [
     'Business websites',
     'Corporate websites',
@@ -360,6 +360,6 @@ export const webDevOffering = {
     'Website maintenance',
     'Performance and accessibility improvements',
   ],
-  featuredProjects: ['adek-tatu', 'kolwa-beba-sacco'],
+  featuredProjects: ['adek-tatu', 'kolwa-beba-sacco', 'rentworks-east-africa'],
   cta: 'Explore Websites I\'ve Built',
 }
