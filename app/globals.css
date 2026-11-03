@@ -36,6 +36,8 @@
   --teal-dim:  rgba(8, 127, 115, 0.12);
   --graphite:  #181b20;
   --graphite-soft: #1f2329;
+  --surface:   #181b20;
+  --surface-raised: #1f2329;
 
   /* Typography */
   --font-sans: var(--font-caviar-dreams), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -58,6 +60,7 @@
   --space-24: 6rem;
 
   /* Borders & radii */
+  --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 20px;
@@ -69,6 +72,7 @@
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --dur-fast: 120ms;
   --dur-base: 200ms;
+  --dur-normal: 200ms;
   --dur-slow: 320ms;
   --dur-reveal: 500ms;
 
@@ -6033,5 +6037,381 @@ em,
 
   .browser-chassis-url {
     max-width: 140px;
+  }
+}
+
+/* ── INTERACTIVE ENGINEERING WORKBENCH ───────────────────── */
+.about-workbench-col {
+  width: 100%;
+}
+
+.engineering-workbench {
+  background: #14171c;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
+  perspective: 1200px;
+  position: relative;
+  transition: border-color var(--dur-base) ease;
+}
+
+.engineering-workbench:hover {
+  border-color: rgba(255, 100, 51, 0.35);
+}
+
+/* Console Header Bar */
+.wb-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  background: #181b20;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.wb-meta-left {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: #fcfcfa;
+  font-weight: 600;
+}
+
+.wb-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 8px rgba(8, 127, 115, 0.7);
+}
+
+.wb-meta-right {
+  color: #94a3b8;
+  font-size: 0.72rem;
+}
+
+/* Segmented Discipline Tabs */
+.wb-segmented-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.wb-tab-btn {
+  background: #181b20;
+  border: none;
+  cursor: pointer;
+  padding: 0.85rem 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #94a3b8;
+  transition: all var(--dur-fast) ease;
+  min-height: 48px;
+}
+
+.wb-tab-btn:hover {
+  background: #20242b;
+  color: #fcfcfa;
+}
+
+.wb-tab-btn.active {
+  background: #232832;
+  color: #fcfcfa;
+  box-shadow: inset 0 -2px 0 var(--orange);
+}
+
+.wb-tab-btn:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: -2px;
+  z-index: 2;
+}
+
+.wb-tab-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.wb-tab-btn.active .wb-tab-icon-wrap {
+  color: var(--orange);
+}
+
+.wb-tab-text {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.wb-tab-num {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  opacity: 0.75;
+}
+
+/* Chassis Stage & 3D Depth Layer */
+.wb-chassis-stage {
+  position: relative;
+  overflow: hidden;
+  background: #101317;
+}
+
+.wb-parallax-layer {
+  transform: rotateX(var(--wb-tilt-x, 0deg)) rotateY(var(--wb-tilt-y, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease-out;
+}
+
+.wb-topology-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Signal Pulse Animation */
+@keyframes wb-pulse-flow {
+  0% {
+    stroke-dashoffset: 32;
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.85;
+  }
+}
+
+.wb-active-signals.pulse-engaged line {
+  stroke-dasharray: 8 4;
+  animation: wb-pulse-flow 0.65s ease-out forwards;
+}
+
+/* Contextual Dossier Card - Pure High Contrast */
+.wb-dossier-card {
+  padding: 1.75rem;
+  background: #181b20;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+.wb-dossier-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.wb-dossier-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.wb-dossier-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid;
+  border-radius: var(--radius-sm);
+}
+
+.wb-dossier-meta {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.wb-dossier-title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #fcfcfa;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.wb-dossier-philosophy {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: #cbd5e1;
+  margin: 0;
+}
+
+/* Cross-Discipline Connectors (The Handshake) */
+.wb-handshake-section {
+  background: #14171c;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 1.15rem 1.25rem;
+}
+
+.wb-handshake-title {
+  font-size: 0.82rem;
+  font-family: var(--font-mono, monospace);
+  color: #fcfcfa;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.75rem 0;
+  display: flex;
+  align-items: center;
+}
+
+.wb-handshake-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.wb-handshake-item {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: #94a3b8;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.wb-handshake-target {
+  font-weight: 600;
+  color: #fcfcfa;
+}
+
+.wb-handshake-detail {
+  color: #cbd5e1;
+}
+
+/* Stack Chips */
+.wb-stack-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.wb-stack-pill {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: #fcfcfa;
+  background: #1e2229;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.6rem;
+}
+
+/* Dossier Footer with Verified Case Reference */
+.wb-dossier-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1.15rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.wb-case-ref {
+  flex: 1;
+  min-width: 200px;
+}
+
+.wb-ref-label {
+  display: block;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.wb-ref-title {
+  display: block;
+  font-size: 1rem;
+  color: #fcfcfa;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.wb-ref-summary {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.wb-case-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1rem;
+  background: #1e2229;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm);
+  color: #fcfcfa;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all var(--dur-fast) ease;
+  white-space: nowrap;
+}
+
+.wb-case-link:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+  background: rgba(255, 100, 51, 0.1);
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  .wb-parallax-layer {
+    transform: none !important;
+    transition: none !important;
+  }
+  .wb-active-signals.pulse-engaged line {
+    animation: none !important;
+  }
+}
+
+/* Mobile Responsive Adjustments (Ensure 48px touch targets & 2x2 grid) */
+@media (max-width: 640px) {
+  .wb-segmented-tabs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .wb-tab-btn {
+    min-height: 48px;
+    padding: 0.75rem 0.5rem;
+  }
+  .wb-dossier-card {
+    padding: 1.25rem;
+  }
+  .wb-dossier-title {
+    font-size: 1.2rem;
+  }
+  .wb-dossier-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .wb-case-link {
+    justify-content: center;
+    min-height: 48px;
   }
 }
