@@ -20,50 +20,62 @@ export function HeroSection() {
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     let isReduced = mediaQuery.matches
+    let ticking = false
+    let frameId: number | null = null
 
     const clearTransforms = () => {
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId)
+        frameId = null
+      }
+      ticking = false
       if (backgroundRef.current) backgroundRef.current.style.transform = ''
       if (signalBusRef.current) signalBusRef.current.style.transform = ''
       if (badgeLayerRef.current) badgeLayerRef.current.style.transform = ''
     }
 
-    const syncReducedMotion = () => {
-      isReduced = mediaQuery.matches
-      if (isReduced) {
-        clearTransforms()
+    const applyParallax = () => {
+      if (isReduced) return
+      if (heroRef.current) {
+        const rect = heroRef.current.getBoundingClientRect()
+        if (rect.bottom > 0) {
+          const scrollY = window.scrollY
+          if (backgroundRef.current) backgroundRef.current.style.transform = `translateY(${Math.round(scrollY * 0.12)}px)`
+          if (signalBusRef.current) signalBusRef.current.style.transform = `translateY(${Math.round(scrollY * 0.25)}px)`
+          if (badgeLayerRef.current) badgeLayerRef.current.style.transform = `translateY(${Math.round(scrollY * 0.05)}px)`
+        }
       }
     }
-
-    mediaQuery.addEventListener('change', syncReducedMotion)
-    if (isReduced) {
-      clearTransforms()
-      return () => mediaQuery.removeEventListener('change', syncReducedMotion)
-    }
-
-    let ticking = false
-    let frameId: number | null = null
 
     const handleScroll = () => {
       if (isReduced) return
       if (!ticking) {
         frameId = window.requestAnimationFrame(() => {
-          if (heroRef.current) {
-            const rect = heroRef.current.getBoundingClientRect()
-            if (rect.bottom > 0) {
-              const scrollY = window.scrollY
-              if (backgroundRef.current) backgroundRef.current.style.transform = `translateY(${Math.round(scrollY * 0.12)}px)`
-              if (signalBusRef.current) signalBusRef.current.style.transform = `translateY(${Math.round(scrollY * 0.25)}px)`
-              if (badgeLayerRef.current) badgeLayerRef.current.style.transform = `translateY(${Math.round(scrollY * 0.05)}px)`
-            }
-          }
+          applyParallax()
           ticking = false
         })
         ticking = true
       }
     }
 
+    const syncReducedMotion = () => {
+      isReduced = mediaQuery.matches
+      if (isReduced) {
+        clearTransforms()
+      } else {
+        applyParallax()
+      }
+    }
+
+    mediaQuery.addEventListener('change', syncReducedMotion)
     window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll()
+
+    if (isReduced) {
+      clearTransforms()
+    } else {
+      handleScroll()
+    }
+
     return () => {
       mediaQuery.removeEventListener('change', syncReducedMotion)
       window.removeEventListener('scroll', handleScroll)

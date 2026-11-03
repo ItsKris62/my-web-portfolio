@@ -246,7 +246,7 @@ export function AccessBadge({ className = '', priority = true }: AccessBadgeProp
       interaction === 'badge' ? normalized.y * 0.28 : normalized.y,
       interaction === 'badge' ? 0.16 : 1,
     )
-  }, [getPointerPosition, reducedMotion, setPointerTarget])
+  }, [getPointerPosition, reducedMotion, requestOrientationPermission, setPointerTarget])
 
   const finishPointerInteraction = useCallback((event: ReactPointerEvent<HTMLElement>, useMomentum: boolean) => {
     if (activePointerRef.current !== event.pointerId) return

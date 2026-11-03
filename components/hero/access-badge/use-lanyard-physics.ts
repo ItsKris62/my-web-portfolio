@@ -291,38 +291,41 @@ export function useLanyardPhysics({ disabled = false, onFrame }: UseLanyardPhysi
     )
   }, [setPointerTarget])
 
-  // User gesture handler for iOS 13+ permission requests
+  // Safe user gesture handler for iOS 13+ permission requests
   const requestOrientationPermission = useCallback(async () => {
-    if (disabled || typeof window === 'undefined') return
-    const DOE = DeviceOrientationEvent as unknown as {
+    if (disabled || typeof window === 'undefined' || window.isSecureContext === false) return
+    if (!('DeviceOrientationEvent' in window)) return
+
+    const DOE = window.DeviceOrientationEvent as unknown as {
       requestPermission?: () => Promise<string>
     }
     if (typeof DOE.requestPermission === 'function' && !orientationAttachedRef.current) {
       try {
         const response = await DOE.requestPermission()
-        if (response === 'granted') {
+        if (response === 'granted' && !orientationAttachedRef.current) {
           window.addEventListener('deviceorientation', handleOrientation, { passive: true })
           orientationAttachedRef.current = true
         }
       } catch {
-        // User dismissed or permission denied; gracefully continue
+        // User dismissed, denied, or device lacks sensors; gracefully continue
       }
     }
   }, [disabled, handleOrientation])
 
   // Gyroscope registration effect (standard devices without explicit prompt)
   useEffect(() => {
-    if (disabled || typeof window === 'undefined') return
+    if (disabled || typeof window === 'undefined' || window.isSecureContext === false) return
+    if (!('DeviceOrientationEvent' in window)) return
 
     const isTouchDevice = 'ontouchstart' in window || (navigator.maxTouchPoints ?? 0) > 0
     if (!isTouchDevice) return
 
-    const DOE = DeviceOrientationEvent as unknown as {
+    const DOE = window.DeviceOrientationEvent as unknown as {
       requestPermission?: () => Promise<string>
     }
 
     // On standard Android / non-permission platforms, attach directly
-    if (typeof DOE.requestPermission !== 'function') {
+    if (typeof DOE.requestPermission !== 'function' && !orientationAttachedRef.current) {
       window.addEventListener('deviceorientation', handleOrientation, { passive: true })
       orientationAttachedRef.current = true
     }
@@ -335,7 +338,8 @@ export function useLanyardPhysics({ disabled = false, onFrame }: UseLanyardPhysi
 
   // Device motion shake detection effect
   useEffect(() => {
-    if (disabled || typeof window === 'undefined') return
+    if (disabled || typeof window === 'undefined' || window.isSecureContext === false) return
+    if (!('DeviceMotionEvent' in window)) return
 
     const isTouchDevice = 'ontouchstart' in window || (navigator.maxTouchPoints ?? 0) > 0
     if (!isTouchDevice) return
@@ -369,11 +373,15 @@ export function useLanyardPhysics({ disabled = false, onFrame }: UseLanyardPhysi
 
   useEffect(() => {
     if (!disabled) return
+    if (orientationAttachedRef.current && typeof window !== 'undefined') {
+      window.removeEventListener('deviceorientation', handleOrientation)
+      orientationAttachedRef.current = false
+    }
     stop()
     targetRef.current = { x: 0, y: 0, strapInfluence: 1 }
     stateRef.current = createRestingState()
     onFrameRef.current(toFrame(stateRef.current))
-  }, [disabled, stop])
+  }, [disabled, handleOrientation, stop])
 
   useEffect(() => stop, [stop])
 

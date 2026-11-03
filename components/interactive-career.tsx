@@ -35,29 +35,32 @@ export function InteractiveCareer() {
   const linkedProject = activeMilestone?.organization ? milestoneProjectMap[activeMilestone.organization] : undefined
   const activePhase = narrativePhases[selectedIndex] || narrativePhases[narrativePhases.length - 1]
 
-  // Track scroll position to synchronize active milestone, but respect manual user selection
+  // Track scroll position to synchronize active milestone, but protect manual user selection and focus
   useEffect(() => {
-    // If user prefers reduced motion, disable automated scroll-driven tab switching
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    if (mediaQuery.matches) return
+    let isReduced = mediaQuery.matches
+
+    const syncReducedMotion = () => {
+      isReduced = mediaQuery.matches
+    }
+    mediaQuery.addEventListener('change', syncReducedMotion)
 
     let ticking = false
     const handleScroll = () => {
+      if (isReduced) return
       if (!ticking) {
         window.requestAnimationFrame(() => {
           if (sectionRef.current) {
-            const rect = sectionRef.current.getBoundingClientRect()
-
-            // If the user manually selected a milestone, do not override it while the section is on screen
-            if (hasManuallySelectedRef.current) {
-              if (rect.bottom < -100 || rect.top > window.innerHeight + 100) {
-                // Section has been scrolled completely away — reset flag for when user returns
-                hasManuallySelectedRef.current = false
-              }
+            // Focus protection: if user manually selected or has active keyboard/interaction focus in career section, do NOT hijack
+            if (
+              hasManuallySelectedRef.current ||
+              (typeof document !== 'undefined' && sectionRef.current.contains(document.activeElement))
+            ) {
               ticking = false
               return
             }
 
+            const rect = sectionRef.current.getBoundingClientRect()
             const sectionHeight = rect.height
             // Only update if section is actively occupying middle of viewport
             if (rect.top <= window.innerHeight * 0.4 && rect.bottom >= window.innerHeight * 0.4) {
@@ -78,7 +81,10 @@ export function InteractiveCareer() {
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      mediaQuery.removeEventListener('change', syncReducedMotion)
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [selectedIndex])
 
   const handleManualSelect = (index: number) => {
@@ -186,6 +192,9 @@ export function InteractiveCareer() {
                 tabIndex={isSelected ? 0 : -1}
                 className={`career-node-btn${isSelected ? ' active' : ''}`}
                 onClick={() => handleManualSelect(index)}
+                onFocus={() => {
+                  hasManuallySelectedRef.current = true
+                }}
                 onKeyDown={(e) => handleKeyDown(e, index)}
               >
                 <div className="node-marker-wrap">
