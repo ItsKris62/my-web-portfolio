@@ -6035,3 +6035,377 @@ em,
     max-width: 140px;
   }
 }
+
+/* ── INTERACTIVE ENGINEERING WORKBENCH ───────────────────── */
+.about-workbench-col {
+  width: 100%;
+}
+
+.engineering-workbench {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  perspective: 1200px;
+  position: relative;
+  transition: border-color var(--dur-normal) ease;
+}
+
+.engineering-workbench:hover {
+  border-color: rgba(255, 100, 51, 0.28);
+}
+
+/* Console Header Bar */
+.wb-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  background: #181b20;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.wb-meta-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.wb-indicator-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 8px rgba(8, 127, 115, 0.6);
+}
+
+.wb-meta-right {
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+/* Segmented Discipline Tabs */
+.wb-segmented-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.wb-tab-btn {
+  background: var(--surface);
+  border: none;
+  cursor: pointer;
+  padding: 0.85rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  transition: all var(--dur-fast) ease;
+  min-height: 48px;
+}
+
+.wb-tab-btn:hover {
+  background: #1c2026;
+  color: var(--ink);
+}
+
+.wb-tab-btn.active {
+  background: #20242b;
+  color: var(--ink);
+  box-shadow: inset 0 -2px 0 var(--orange);
+}
+
+.wb-tab-btn:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: -2px;
+  z-index: 2;
+}
+
+.wb-tab-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+.wb-tab-btn.active .wb-tab-icon-wrap {
+  color: var(--orange);
+}
+
+.wb-tab-text {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.wb-tab-num {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+
+/* Chassis Stage & 3D Depth Layer */
+.wb-chassis-stage {
+  position: relative;
+  overflow: hidden;
+  background: #14171c;
+}
+
+.wb-parallax-layer {
+  transform: rotateX(var(--wb-tilt-x, 0deg)) rotateY(var(--wb-tilt-y, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 0.12s ease-out;
+}
+
+.wb-topology-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Signal Pulse Animation */
+@keyframes wb-pulse-flow {
+  0% {
+    stroke-dashoffset: 32;
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.85;
+  }
+}
+
+.wb-active-signals.pulse-engaged line {
+  stroke-dasharray: 8 4;
+  animation: wb-pulse-flow 0.65s ease-out forwards;
+}
+
+/* Contextual Dossier Card */
+.wb-dossier-card {
+  padding: 1.5rem;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.wb-dossier-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.wb-dossier-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.wb-dossier-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid;
+  border-radius: var(--radius-xs);
+}
+
+.wb-dossier-meta {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.wb-dossier-title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.wb-dossier-philosophy {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* Cross-Discipline Connectors (The Handshake) */
+.wb-handshake-section {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs);
+  padding: 1rem 1.15rem;
+}
+
+.wb-handshake-title {
+  font-size: 0.8rem;
+  font-family: var(--font-mono, monospace);
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.65rem 0;
+  display: flex;
+  align-items: center;
+}
+
+.wb-handshake-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.wb-handshake-item {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.wb-handshake-target {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.wb-handshake-detail {
+  color: var(--muted);
+}
+
+/* Stack Chips */
+.wb-stack-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.wb-stack-pill {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs);
+  padding: 0.2rem 0.55rem;
+}
+
+/* Dossier Footer with Verified Case Reference */
+.wb-dossier-footer {
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.wb-case-ref {
+  flex: 1;
+  min-width: 200px;
+}
+
+.wb-ref-label {
+  display: block;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.2rem;
+}
+
+.wb-ref-title {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+
+.wb-ref-summary {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.wb-case-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xs);
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all var(--dur-fast) ease;
+  white-space: nowrap;
+}
+
+.wb-case-link:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+  background: rgba(255, 100, 51, 0.06);
+}
+
+/* Reduced Motion Override */
+@media (prefers-reduced-motion: reduce) {
+  .wb-parallax-layer {
+    transform: none !important;
+    transition: none !important;
+  }
+  .wb-active-signals.pulse-engaged line {
+    animation: none !important;
+  }
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 640px) {
+  .wb-segmented-tabs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .wb-tab-btn {
+    min-height: 44px;
+    padding: 0.65rem 0.5rem;
+  }
+  .wb-dossier-card {
+    padding: 1.15rem;
+  }
+  .wb-dossier-title {
+    font-size: 1.15rem;
+  }
+  .wb-dossier-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .wb-case-link {
+    justify-content: center;
+  }
+}

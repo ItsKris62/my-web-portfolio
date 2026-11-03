@@ -1,5 +1,5 @@
-import { Quote, Compass, ShieldCheck, Wrench } from 'lucide-react'
-import { siteConfig } from '@/lib/data'
+import { Quote } from 'lucide-react'
+import { EngineeringWorkbench } from '@/components/about/engineering-workbench'
 
 export function AboutSection() {
   return (
@@ -45,39 +45,8 @@ export function AboutSection() {
           </blockquote>
         </div>
 
-        <div className="about-cards-col">
-          <div className="ethos-card">
-            <div className="ethos-icon" aria-hidden="true">
-              <Compass className="w-5 h-5 text-[var(--orange)]" />
-            </div>
-            <h4>Pragmatic Engineering</h4>
-            <p>
-              I choose proven, maintainable technologies over transient hype. Systems should solve real operational
-              bottlenecks without introducing unmanageable complexity.
-            </p>
-          </div>
-
-          <div className="ethos-card">
-            <div className="ethos-icon" aria-hidden="true">
-              <ShieldCheck className="w-5 h-5 text-[var(--teal)]" />
-            </div>
-            <h4>Security from Day Zero</h4>
-            <p>
-              Security isn&apos;t an afterthought bolted onto a finished product. Every architecture incorporates least-privilege
-              access, network segmentation, and auditable verification.
-            </p>
-          </div>
-
-          <div className="ethos-card">
-            <div className="ethos-icon" aria-hidden="true">
-              <Wrench className="w-5 h-5 text-[var(--ink)]" />
-            </div>
-            <h4>End-to-End Ownership</h4>
-            <p>
-              From structured cabling in a multi-site branch office to Next.js App Router code and automated n8n
-              pipelines, I take pride in understanding every layer of the stack.
-            </p>
-          </div>
+        <div className="about-workbench-col">
+          <EngineeringWorkbench />
         </div>
       </div>
     </section>
